@@ -22,17 +22,23 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="class1.py">
+    <Compile Include="NetworkArchitecture.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataPrep.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="View.py" />
-    <Compile Include="Model.py">
+    <Compile Include="models\exampleModel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="module1.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="View.py" />
+    <Compile Include="models\RCNN.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SelectiveSearch.py">
@@ -41,6 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|env_inz" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="models\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
