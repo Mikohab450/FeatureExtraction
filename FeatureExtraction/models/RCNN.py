@@ -15,8 +15,12 @@ import seaborn as sns
 import keract
 #print(os.environ['PYTHONPATH'])
 #print (os.environ['CONDA_DEFAULT_ENV'])
-
+import sys
 from keras.applications import VGG16
+from keras.applications import VGG19
+from keras.applications import ResNet50
+from keras.applications import MobileNet
+import importlib
 from keras.layers import Activation
 from keras.models import Sequential
 from keras.layers import Dense
@@ -36,25 +40,32 @@ class RCNN(NetworkArchitecture):
 
     warped_size = (224, 224)
     X = []
-
+    CNN_model=None
+    list_of_models=['VGG16','VGG19','ResNet50','MobileNet']
     def __init__(self):
-        modelvgg16 = VGG16(include_top=True,weights='imagenet')
-        #self.modelvgg16.summary()
-        # define the architecture of the network
-
-
-        
-        self.modelvgg = models.Model(inputs  =  modelvgg16.inputs, 
-                                outputs = modelvgg16.layers[-3].output)
         ## show the deep learning model
-        self.modelvgg.summary()
-
+       # self.modelvgg.summary()
+        
         #prepared annotations
         self.df_anno = pd.read_csv("df_anno.csv")
+        
+
+    def choose_model(self,idx):
+       
+        m=self.list_of_models[idx]
+        temp=eval(m)
+        #module = importlib.import_module('keras.applications.'+m)
+        #class_ = getattr(module, m)
+        instance = temp()
+       
+        self.CNN_model = models.Model(inputs  =  instance.inputs, 
+                                outputs = instance.layers[-3].output)
+        self.CNN_model.summary()
+        #self.modelvgg16.
 
 
-
-
+    def add_model(self,model):
+        self.list_of_models.append(model)
 
 
     def warp(self,img, newsize):
@@ -107,7 +118,7 @@ class RCNN(NetworkArchitecture):
     
             ## for each object that exists in the data,
             ## find if the candidate regions contain any object
-            for ibb in range(row["Nobj"]): 
+            for ibb in range(row["nobj"]): 
 
                 name = row["bbx_{}_name".format(ibb)]
                 if irow % 50 == 0:
@@ -240,24 +251,71 @@ class RCNN(NetworkArchitecture):
 
 
 
-    def extract_features_from_image(self,image):
+    def extract_features_from_image(self,image,anno):
         '''
         image np. array from which the features will be extracted
         '''
         #imgage  = imageio.imread(path)
-        image = self.warp(image,self.warped_size)
-        regions = ss.get_region_proposal(image,min_size=50)
-    
-
-        wrapped_regions=self.wrap_regions(image,regions)
-
-        features = self.modelvgg.predict(wrapped_regions)
         
-        #print(len(wrapped_regions))
-        #activations= keract.get_activations(self.modelvgg,wrapped_regions)
-        #print(len(activations))
-        #self.flatten_activations(activations)
-        return features #activations[layer]
+        anno = pd.read_csv("etykiety.csv")
+
+        IoU_cutoff_object     = 0.5
+        IoU_cutoff_not_object = 0.5
+        image_pos,image_neg, info_pos,info_neg  = [],[],[],[]
+        for irow in range(anno.shape[0]):
+            orig_h, orig_w, _ = image.shape
+            row  = anno.iloc[irow,:]
+            img = self.warp(image,self.warped_size)
+            #img  = image # warp(img, )
+            orig_nh, orig_nw, _ = img.shape
+            regions = ss.get_region_proposal(img,min_size=50)[::-1]
+            for ibb in range(row["nobj"]): 
+
+                name = row["bbx_{}_name".format(ibb)]
+
+        
+                ## extract the bounding box of the object  
+                multx, multy  = orig_nw/orig_w, orig_nh/orig_h 
+                #image wa sscaled, so the ground truth boxes also must be scaled
+                true_xmin     = row["bbx_{}_xmin".format(ibb)]*multx
+                true_ymin     = row["bbx_{}_ymin".format(ibb)]*multy
+                true_xmax     = row["bbx_{}_xmax".format(ibb)]*multx
+                true_ymax     = row["bbx_{}_ymax".format(ibb)]*multy
+        
+        
+                object_found_TF = 0
+                _image1 = None
+               
+                print(len(regions))
+                for r in regions:
+                    
+                    prpl_xmin, prpl_ymin, prpl_width, prpl_height = r["rect"]
+
+                    ## calculate IoU between the candidate region and the object
+                    IoU = ss.get_IOU(prpl_xmin, prpl_ymin, prpl_xmin + prpl_width, prpl_ymin + prpl_height,
+                                     true_xmin, true_ymin, true_xmax, true_ymax)
+                    ## candidate region numpy array
+                    img_bb = np.array(img[prpl_ymin:prpl_ymin + prpl_height,
+                                          prpl_xmin:prpl_xmin + prpl_width])
+            
+                    print(IoU)
+                    if IoU > IoU_cutoff_object:
+                        info_pos.append([name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]])
+                        image_pos.append(img_bb)
+                        break
+                    elif IoU < IoU_cutoff_not_object:
+                        background=["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        if background not in info_neg:
+                            info_neg.append(background)
+                            image_neg.append(img_bb)
+
+       # wrapped_regions=self.wrap_regions(image,regions)
+        images = image_pos+image_neg
+        infos= np.array(info_pos+info_neg)
+
+        features = self.warp_and_create_cnn_feature(images)
+
+        return np.concatenate((infos,features),axis=1)
 
 
     def wrap_regions(self,img,regions):
@@ -277,10 +335,6 @@ class RCNN(NetworkArchitecture):
         return(wrapped_list_of_regions)
 
         
-    
-    
-  
-   
     def warp_and_create_cnn_feature(self,image):
         '''
         image  : np.array of (N image, shape1, shape2, Nchannel )
@@ -290,7 +344,7 @@ class RCNN(NetworkArchitecture):
         for irow in range(len(image)):
             image[irow] = self.warp(image[irow],self.warped_size)
         image = np.array(image)
-        feature = self.modelvgg.predict(image)
+        feature = self.CNN_model.predict(image)
         return(feature)
 
         

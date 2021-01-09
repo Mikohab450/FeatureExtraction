@@ -12,8 +12,8 @@ from NetworkArchitecture import NetworkArchitecture
 from tkinter import Toplevel
 import os
 import h5py
-
-
+from DataPrep import create_annotations
+import sys
 global list_of_modules
 
 
@@ -21,12 +21,14 @@ global list_of_modules
 #ppp=os.path
 list_of_modules=[imp.load_source('RCNN', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models\\RCNN.py'))]
 root=tk.Tk()
-model = None
+
+architecture_idx=0
 model_idx=0
-img_path='C:\\Users\\Mikolaj\\Pictures\\debys2s.jpg'
+img_path='C:\\Users\\Mikolaj\\Documents\\PASCAL_VOC\\VOC2012\\Test\\JPEGImages\\2007_000799.jpg'
+ann_path='C:\\Users\\Mikolaj\\Documents\\PASCAL_VOC\\VOC2012\\Test\\Annotations'
 data_dir=''
-
-
+global architecture
+architecture = None
 
 def upload_dir(event=None):
     global data_dir
@@ -34,12 +36,18 @@ def upload_dir(event=None):
 
 def extract_feature(event=None):
     
-    if img_path is not None and model is not None:
+    global architecture
+    if architecture is not None:
+        pass
+    else:
+        architecture = RCNN.RCNN()
+    if img_path is not None:
         img = imageio.imread(img_path)
         img = skimage.util.img_as_float(img)
-        activations = model.extract_features_from_image(img)
+        annotation=create_annotations(ann_path)
+        activations =architecture.extract_features_from_image(img,annotation)
         if v.get() == "text":
-            np.savetxt("test4.txt",activations)
+            np.savetxt("test4.txt",activations,fmt="%s")
         if v.get() =="hdf5":
             h5f = h5py.File('data.h5', 'w')
             h5f.create_dataset('dataset_1', data=activations)
@@ -69,15 +77,20 @@ def add_module(event=None):
 def onselect(event):
     w = event.widget
     try:
-        global model_idx
+        global architecture_idx
+        architecture_idx = int(w.curselection()[0])
+    except IndexError:
+        return 0
+def onselect_model(event):
+    w = event.widget
+    try:
+        global model_idxx
         model_idx = int(w.curselection()[0])
     except IndexError:
         return 0
-    #model_name = w.get(idx)
-    #print(value)
 
 
-def list_module(event=None):
+def list_architectures(event=None):
     newWindow= None
     if newWindow == None:
         newWindow = Toplevel(root) 
@@ -99,17 +112,53 @@ def list_module(event=None):
         list.pack()
         list.bind('<<ListboxSelect>>', onselect)
 
+def list_models(event=None):
+    newWindow= None
+    if newWindow == None:
+        newWindow = Toplevel(root) 
+  
+    # sets the title of the 
+    # Toplevel widget 
+        newWindow.title("List") 
+  
+    # sets the geometry of toplevel 
+        newWindow.geometry("200x200") 
+  
+        list = tk.Listbox(newWindow)
+        global architecture
+        if architecture is not None:
+            pass
+        else:
+            architecture = RCNN.RCNN()
+        i=0
+        for model in architecture.list_of_models:
+            list.insert(i,model)
+            i=1+1
 
-def apply_model(event=None):
+        list.pack()
+        list.bind('<<ListboxSelect>>', onselect_model)
 
-    global model
-    print(model_idx)
-    model = getattr(list_of_modules[model_idx],list_of_modules[model_idx].__name__ )()
+def apply_architecture(event=None):
+
+    global architecture
+    print(architecture_idx)
+    architecture = getattr(list_of_modules[architecture_idx],list_of_modules[architecture_idx].__name__ )()
 
 def train_model(event=None):
-    if model is not None:
-        model.train()
+    if architecture is not None:
+        architecture.train()
 
+def load_model(event=None):
+    pass
+
+def choose_model(event=None):
+    global architecture
+    if architecture is not None:
+        pass
+    else:
+        architecture = RCNN.RCNN()
+
+    architecture.choose_model(model_idx)
 root.title("Feature Extraction")
 
 #label.pack(padx=420, pady=420) # Pack it into the window
@@ -127,14 +176,25 @@ upload_image_button.pack()
 button=tk.Button(text="load external architecture",command=add_module)
 button.pack()
 
-button2=tk.Button(text="list architectures",command=list_module)
+button2=tk.Button(text="list architectures",command=list_architectures)
 button2.pack()
 
-button3=tk.Button(text="apply model",command=apply_model)
+button3=tk.Button(text="apply architecture",command=apply_architecture)
 button3.pack()
 
-button3=tk.Button(text="train model",command=train_model)
-button3.pack()
+button4=tk.Button(text="train model",command=train_model)
+button4.pack()
+
+button5=tk.Button(text="choose model",command=choose_model)
+button5.pack()
+
+button6=tk.Button(text="load extrernal model",command=load_model)
+button6.pack()
+
+
+button6=tk.Button(text="list models",command=list_models)
+button6.pack()
+
 v = tk.StringVar()
 
 tk.Radiobutton(root, 

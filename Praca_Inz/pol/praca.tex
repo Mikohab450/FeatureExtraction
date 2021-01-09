@@ -1,0 +1,691 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        %
+% Szablon pracy dyplomowej inzynierskiej % 
+%                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\documentclass[a4paper,twoside,12pt]{book}
+\usepackage[utf8]{inputenc}                                      
+\usepackage[T1]{fontenc}  
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage[british,polish]{babel} 
+\usepackage{indentfirst}
+\usepackage{lmodern}
+\usepackage{graphicx} 
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{mathtools}
+\usepackage{geometry}
+%\usepackage[nolists,nomarkers]{endfloat}  // wersja pracy z rysunkami i tabelami na końcu
+\usepackage[page]{appendix} % toc,
+\renewcommand{\appendixtocname}{Dodatki}
+\renewcommand{\appendixpagename}{Dodatki}
+\renewcommand{\appendixname}{Dodatek}
+
+\usepackage{setspace}
+\onehalfspacing
+
+
+\frenchspacing
+
+\usepackage{listings}
+%\lstset{
+%	language={},
+%	basicstyle=\ttfamily,
+%	keywordstyle=\lst@ifdisplaystyle\color{blue}\fi,
+%	commentstyle=\color{gray}
+%}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% listingi 
+\usepackage{listings}
+\lstset{%
+language=C++,%
+commentstyle=\textit,%
+identifierstyle=\textsf,%
+keywordstyle=\sffamily\bfseries, %\texttt, %
+%captionpos=b,%
+tabsize=3,%
+frame=lines,%
+numbers=left,%
+numberstyle=\tiny,%
+numbersep=5pt,%
+breaklines=true,%
+morekeywords={descriptor_gaussian,descriptor,partition,fcm_possibilistic,dataset,my_exception,exception,std,vector},%
+escapeinside={@*}{*@},%
+%texcl=true, % wylacza tryb verbatim w komentarzach jednolinijkowych
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%
+
+%%%% TODO LIST GENERATOR %%%%%%%%%
+
+%\usepackage{tikz}
+%\usepackage{manfnt}   % dangerous sign 
+\usepackage{color}
+\definecolor{brickred}      {cmyk}{0   , 0.89, 0.94, 0.28}
+
+\makeatletter \newcommand \kslistofremarks{\section*{Uwagi} \@starttoc{rks}}
+  \newcommand\l@uwagas[2]
+    {\par\noindent \textbf{#2:} %\parbox{10cm}
+{#1}\par} \makeatother
+
+
+\newcommand{\ksremark}[1]{%
+{%\marginpar{\textdbend}
+{\color{brickred}{[#1]}}}%
+\addcontentsline{rks}{uwagas}{\protect{#1}}%
+}
+
+\newcommand{\comma}{\ksremark{przecinek}}
+\newcommand{\nocomma}{\ksremark{bez przecinka}}
+\newcommand{\styl}{\ksremark{styl}}
+\newcommand{\ortografia}{\ksremark{ortografia}}
+\newcommand{\fleksja}{\ksremark{fleksja}}
+\newcommand{\pauza}{\ksremark{pauza `--', nie dywiz `-'}}
+\newcommand{\kolokwializm}{\ksremark{kolokwializm}}
+
+%%%%%%%%%%%%%% END OF TODO LIST GENERATOR %%%%%%%%%%%
+
+%%%%%%%%%%%% ZYWA PAGINA %%%%%%%%%%%%%%%
+% brak kapitalizacji zywej paginy
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{\nouppercase{\it\rightmark}}
+\fancyhead[RE]{\nouppercase{\it\leftmark}}
+\fancyhead[LE,RO]{\it\thepage}
+
+
+\fancypagestyle{tylkoNumeryStron}{%
+   \fancyhf{} 
+   \fancyhead[LE,RO]{\it\thepage}
+}
+
+\fancypagestyle{NumeryStronNazwyRozdzialow}{%
+   \fancyhf{} 
+   \fancyhead[LO]{\nouppercase{\it\rightmark}}
+   \fancyhead[RE]{\nouppercase{\it\leftmark}}
+   \fancyhead[LE,RO]{\it\thepage}
+}
+
+
+%%%%%%%%%%%%% OBCE WTRETY  
+\newcommand{\obcy}[1]{\emph{#1}}
+\newcommand{\ang}[1]{{\selectlanguage{british}\obcy{#1}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% polskie oznaczenia funkcji matematycznych
+\renewcommand{\tan}{\operatorname {tg}}
+\renewcommand{\log}{\operatorname {lg}}
+
+% jeszcze jakies drobiazgi
+
+\newcounter{stronyPozaNumeracja}
+
+\newcommand{\hcancel}[1]{%
+    \tikz[baseline=(tocancel.base)]{
+        \node[inner sep=0pt,outer sep=0pt] (tocancel) {#1};
+        \draw[red] (tocancel.south west) -- (tocancel.north east);
+    }%
+}%
+
+\newcommand{\miesiac}{%
+  \ifcase\the\month
+  \or styczeń% 1
+  \or luty% 2
+  \or marzec% 3
+  \or kwiecień% 4
+  \or maj% 5
+  \or czerwiec% 6
+  \or lipiec% 7
+  \or sierpień% 8
+  \or wrzesień% 9
+  \or październik% 10
+  \or listopad% 11
+  \or grudzień% 12
+  \fi}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Helvetica font macros for the title page:
+\newcommand{\headerfont}{\fontfamily{phv}\fontsize{18}{18}\bfseries\scshape\selectfont}
+\newcommand{\titlefont}{\fontfamily{phv}\fontsize{18}{18}\selectfont}
+\newcommand{\otherfont}{\fontfamily{phv}\fontsize{14}{14}\selectfont}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\autor}{Mikołaj Habarta}
+\newcommand{\promotor}{dr hab. inż.  Michał Kawulok}
+\newcommand{\konsultant}{}
+\newcommand{\tytul}{Narzędzie do ekstrakcji cech głębokich za pomocą konwolucyjnych sieci neuronowych}
+\newcommand{\polsl}{Politechnika Śląska}
+\newcommand{\wydzial}{Wydział Automatyki, Elektroniki i Informatyki}
+
+
+\begin{document}
+%\kslistofremarks 
+	
+%%%%%%%%%%%%%%%%%%  STRONA TYTULOWA %%%%%%%%%%%%%%%%%%%
+\pagestyle{empty}
+{
+	\newgeometry{top=2.5cm,%
+	             bottom=2.5cm,%
+	             left=3cm,
+	             right=2.5cm}
+	\sffamily
+	\rule{0cm}{0cm}
+	
+	\begin{center}
+	\includegraphics[width=0.4\textwidth]{politechnika_sl_logo_bw_poziom_pl.eps}
+	\end{center} 
+	\vspace{1cm}
+	\begin{center}
+	\headerfont \polsl
+	\end{center}
+	\begin{center}
+	\headerfont \wydzial
+	\end{center}
+	\vfill
+	\begin{center}
+	\titlefont Praca inżynierska
+	\end{center}
+	\vfill
+	
+	\begin{center}
+	\otherfont \tytul\par
+	\end{center}
+	
+	\vfill
+	
+	\vfill
+	 
+	\noindent\vbox
+	{
+		\hbox{\otherfont autor: \autor}
+		\vspace{12pt}
+		\hbox{\otherfont kierujący pracą: \promotor}
+		%\vspace{12pt}  % zakomentuj, jezeli nie ma konsultanta
+		%\hbox{\otherfont konsultant: \konsultant} % zakomentuj, jezeli nie ma konsultanta
+	}
+	\vfill 
+ 
+   \begin{center}
+   \otherfont Gliwice,  \miesiac\ \the\year
+   \end{center}	
+	\restoregeometry
+}
+  
+
+\cleardoublepage
+ 
+
+\rmfamily
+\normalfont
+
+%%%%%%%%%%%%%%%%%%%%% oswiadczenie o udostępnianiu pracy dyplomowej %%%%%%%%%%%%%%%%%%%
+\cleardoublepage
+
+\begin{flushright}
+załącznik nr 2 do zarz. nr 97/08/09 
+\end{flushright}
+
+\vfill  
+
+\begin{center}
+\Large\bfseries Oświadczenie
+\end{center}
+
+\vfill
+
+Wyrażam  zgodę / Nie wyrażam zgody*  na  udostępnienie  mojej  pracy  dyplomowej / rozprawy doktorskiej*.
+
+\vfill
+
+Gliwice, dnia \today
+
+\vfill
+
+\rule{0.5\textwidth}{0cm}\dotfill 
+
+\rule{0.5\textwidth}{0cm}
+\begin{minipage}{0.45\textwidth}
+{\begin{center}(podpis)\end{center}}
+\end{minipage} 
+
+\vfill
+
+\rule{0.5\textwidth}{0cm}\dotfill 
+
+\rule{0.5\textwidth}{0cm}
+\begin{minipage}{0.45\textwidth}
+{\begin{center}\rule{0mm}{5mm}(poświadczenie wiarygodności podpisu przez Dziekanat)\end{center}}
+\end{minipage}
+
+
+\vfill
+
+* podkreślić właściwe
+
+ 
+
+
+%%%%%%%%%%%%%%%%%%%%% oswiadczenie promotora o spełnieniu wymagań formalnych %%%%%%%%%%%%%%%%%%%
+\cleardoublepage
+
+\rule{1cm}{0cm}
+
+\vfill  
+
+\begin{center}
+\Large\bfseries Oświadczenie promotora
+\end{center}
+
+\vfill
+
+Oświadczam, że praca „\tytul” spełnia wymagania formalne pracy dyplomowej inżynierskiej.
+
+\vfill
+
+
+
+\vfill
+
+Gliwice, dnia \today
+
+\rule{0.5\textwidth}{0cm}\dotfill 
+
+\rule{0.5\textwidth}{0cm}
+\begin{minipage}{0.45\textwidth}
+{\begin{center}(podpis promotora)\end{center}}
+\end{minipage} 
+
+\vfill
+
+ 
+
+\cleardoublepage
+
+
+%%%%%%%%%%%%%%%%%% SPIS TRESCI %%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{Roman}
+\pagestyle{tylkoNumeryStron}
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mainmatter
+\pagenumbering{arabic}
+\setcounter{stronyPozaNumeracja}{\value{page}}
+\pagestyle{NumeryStronNazwyRozdzialow}
+
+%%%%%%%%%%%%%% wlasciwa tresc pracy %%%%%%%%%%%%%%%%%
+
+\chapter{Wstęp}
+{W ciągu ostatnich kilku lat można zaobserwować gwałtowny rozwój dziedzin z zakresu uczenia maszynowego oraz sieci neuronowych. Pomimo pozornej nowości tych technologii, podstawy teoretyczne wielu z nich zostały opracowane już w latach latach 40. zeszłego stulecia \cite{bib:neural1}. Idee te były suckesywnie rozwijane oraz modyfikowane, lecz ograniczenia sprzętowe oraz trudność w dostępie do danych uniemożliwiały ich realne wykorzystanie. Dopiero na początku zeszłej dekady postępująca cyfyzacja oraz digitalizacja spowodowała znaczny wzorst ilości przechowywanych danych oraz ich większą dostępność. W tabeli \ref{tab:datasets} pokazano, jak zmieniały się rozmiary wybranych zbiorów danych przeznaczonych do  zagadnień związanych z rozponawaniem rysów twarzy na przestrzeni lat. Łatwo zauważyć szybko zwiększające się rozmiary kolejnych baz danych, ze szczególnie gwałtownym wzrostem pomiędzy 2008 a 2014 rokiem. Dzięki dostępności coraz to większych zbiorów danych oraz ciągle rosnącej mocy obliczeniowej komputerów, systemy oparte na sztucznej inteligencjii osiągają coraz to lepsze wyniki i są w stanie wykonywać pewne zadania lepiej niż człowiek.}
+
+{ W ostatnich latach można zaobserwować zwiększajacy się wpływ tych systemów na ludzkie życie w wielu różnych dziedzinach, takich jak np. diagnostyce chorób\cite{bib:cancer}, \cite{bib:cancer2}, samo-prowadzących się pojazdach, cyberbezpieczeństwie, czy marketingu. Te dotychczasowe osiągnięcia systemów opartych o sztuczną inteligencję oraz potencjał ten dziedziny pozwala przypuszczać, że ich znaczenie w świecie będzie już tylko rosnąć.}
+ 
+
+
+\begin{table}
+\centering
+
+\begin{tabular}{|l|l|l|}
+\hline
+Nazwa & Rok powstania & Ilość obrazów \\
+\hline
+Yale Face Database & 1997 & 165 \\
+JAFFE Facial Expression Database  & 1998 &  213 \\
+Face Recognition Grand Challenge Dataset & 2004 & 4007 \\
+CASIA 3D Face Database & 2007 & 4624 \\
+Bosphorus &2008& 4652 \\
+FaceScrub & 2014 & 107818 \\
+IMDB-WIKI & 2015 & 523051 \\
+Aff-Wild & 2017 & $\sim$ 1,250,000 \\
+Aff-Wild2 & 2019 &$\sim$ 2,800,000 \\
+\end{tabular}
+\caption{Rozmiary zbiorów danych służących do rozpoznawania twarzy na przestrzeni lat}
+\label{tab:datasets}
+\end{table}  
+
+\section{Cel pracy}
+{Celem pracy jest stworzenie uniwersalnego narzędzia, które ma umożliwić ekstrakcje wektorów cech głębokich w postaci serializowanej wraz z przypisanymi do nich etykietami w wybranym przez użytkownika formacie. Ekstrakcja jest dokonywana za pomocą konwolucyjnych sieci neuronowych służących do detekcji obiektów. Narzędzie powinno mieć możliwość wyboru architektury sieci, jak i dodania własnych architektur. Domyślną architekturą systemu, która zostanie zaimplementowana będzie architektura R-CNN. Narzędzie ma mieć możliwość użycia własnego zestawu danych w formacie PASCAL-VOC.}
+\section{Zakres pracy}
+{Zakres pracy obejmuje zgłębienie dziedziny wizji komputerowej oraz przegląg literatury technicznej. Kolejnym krokiem jest dogłębne zrozumienie konwolucyh sieci neuronowych służących do detekcji obiektów w obrazach, a następnie zapoznanie się bazą danych PASCAL-VOC oraz formatem przechowywanych tam danych. Kolejnym etapem jest przegląd oraz wybór odpowiedniej technologii. }
+\section{Plan pracy}
+{Praca składa sie z 7 rozdziałów, które opisują teoretyczne oraz praktyczne ujęcie tematu.}
+{Rozdział 1 zawiera wstęp do tematu oraz określenie celów projektu}
+{Rozdział 2 składa się z analizy zagadnienia detekcji obiektów w obrazach, przeglądu i porównanie dotychczas znanych rozwiązań i technologii}
+{W rozdziale 3 omówiono wymagania funkcjonalne i niefunkcjonalne oraz dokonano opisu zastosowanych narzędzi.}
+{Rozdział 4 obejmuje specyfikacje zewnętrzna. Zostanie w nim opisany sposób instalacji oraz przykładowe scenariusze korzystania z narzędzia }
+{W rozdziale 5 można znaleźć opis architektury systemu oraz omówienie użytych modułów i bibliotek}
+{Rozdział 6 zawiera opis weryfikacji oraz walidacji systemu.}
+{W rozdziale 7 zawarto podsumowanie całej pracy oraz wnioski z niej płynące. Wymieniono również największe trudności, które napotkano w czasie pracy nad narzędziem.}
+%\begin{itemize}
+%\item wprowadzenie w problem/zagadnienie
+%\item osadzenie problemu w dziedzinie
+%\item cel pracy
+%\item zakres pracy
+%\item zwięzła charakterystyka rozdziałów
+%\item jednoznaczne określenie wkładu autora, w przypadku prac wieloosobowych – tabela z autorstwem poszczególnych elementów pracy
+%\end{itemize}
+
+
+\chapter{Analiza dziedziny}
+{W tym rozdziale zostanie omówiony problem detekcji oraz klasyfikacji obiektów w obrazach. Pokrótce wyjaśniona zostanie zasada działania konwolucyjnych sieci neuronowych, ze zwięzłym opisem różnych rodzaji warstw, a następnie przedstawione zostanie kilka najważniejszych modeli sieci neuronowych. Opisana zostanie architektura R-CNN, która została zaimplementowana w programia, oraz algorytm wyszukiwania selektywnego, który również został zaimplementowany w ramach tej architektury. Aby móc uzyskać jakieś porównanie co do wydajności i ograniczeń architektury R-CNN,  pokazane zostaną również inne architektury sieci, takie jak Fast R-CNN czy YOLO.}
+
+\section{Analiza problemu}
+{Człowiek postrzega świat głównie wizualnie. Szacuje się, że 80 \% bdożców odbieranych przez człowieka to bodźce wzrokowe. Niektóre z teorii \cite{bib:nilsson2013eye} pozwają przypuszczać, że wykształcenie oka było najważniejszym momentem w historii ewolucji oraz kluczowym elementem, który umożliwił powstanie inteligentnych form życia. Nic więc dziwnego, że temat tak znaczący dla człowieka otrzymuje proporcjonalnie dużo uwagi w dziedzinie sztucznej inteligencji. Umożliwinie maszynom zrozumienia wizualnych danych jest głównym celem, do którego spełnienia jestaśmy, zdawaćby się mogło, coraz bliżej.}
+{Jednym z podstawowych problemów z dziedziny wizji komputerowej jest klasyfikacja. Polega ona na przypisaniu pewnej kategorii na podstawie obrazu. Zazwyczaj kategorie te to obiekty znajdujące się na zdjęciu. Chcemy więc, aby maszyna po zobaczeniu zdjęcia psa skategoryzowała go jako 'pies'. Do problemu klasyfikacji możemy dołożyć jeszcze inny problem - detekcji. Teraz chcemy, aby maszyna bo zobaczeniu zdjęcia psa nie tylko zidentyfkowała go jako psa, lecz również wskazała w którym miejscu na zdjeciu ten pies sie znajduje.}
+\section{Konwolucyjne sieci neuronowe}
+\subsection{Warstwy}%%poszczegolne warstwy?
+\subsection{przykladowe modele}
+\subsubsection{AlexNet}
+\subsubsection{ImageNet}
+\subsubsection{VGG16}
+\subsubsection{ResNet}
+\section{R-CNN}
+\subsection{Algorytm wyszukiwania selektywnego}
+\section{ggg}
+\begin{itemize}
+\item analiza tematu
+\item  wprowadzenie do dziedziny (\ang{state of the art}) – sformułowanie problemu
+\item  studia literaturowe %\cite{bib:artykul,bib:ksiazka,bib:konferencja,bib:internet}
+\item  przegląd literatury tematu (należy wskazać źródła wszystkich informacji zawartych w pracy)
+\item  opis znanych rozwiązań (także opisanych naukowo, jeżeli problem jest poruszany w publikacjach naukowych), algorytmów, osadzenie pracy w kontekście
+\end{itemize}
+
+ 
+\chapter{Wymagania i narzędzia}
+
+\begin{itemize}
+\item wymagania funkcjonalne i niefunkcjonalne
+\item przypadki użycia (diagramy UML)
+\item opis narzędzi
+\item metodyka pracy nad projektowaniem i implementacją
+\end{itemize}
+
+\chapter{Specyfikacja zewnętrzna}
+\begin{itemize}
+\item  wymagania sprzętowe i programowe
+\item  sposób instalacji
+\item  sposób aktywacji
+\item  kategorie użytkowników
+\item  sposób obsługi
+\item   administracja systemem
+\item  kwestie bezpieczeństwa
+\item  przykład działania
+\item  scenariusze korzystania z systemu (ilustrowane zrzutami z ekranu lub generowanymi dokumentami)
+\end{itemize}
+ 
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    y tick label style={
+        /pgf/number format/.cd,
+            fixed,   % po zakomentowaniu os rzednych jest indeksowana wykladniczo
+            fixed zerofill, % 1.0 zamiast 1
+            precision=1,
+        /tikz/.cd
+    },
+    x tick label style={
+        /pgf/number format/.cd,
+            fixed,
+            fixed zerofill,
+            precision=2,
+        /tikz/.cd
+    }
+]
+\addplot [domain=0.0:0.1] {rnd};
+\end{axis} 
+\end{tikzpicture}
+\caption{Podpis rysunku po rysunkiem.}
+\label{fig:2}
+\end{figure}
+
+ 
+
+\chapter{Specyfikacja wewnętrzna}
+
+
+ 
+\begin{itemize}
+\item przedstawienie idei
+\item architektura systemu
+\item opis struktur danych (i organizacji baz danych)
+\item komponenty, moduły, biblioteki, przegląd ważniejszych klas (jeśli występują)
+\item przegląd ważniejszych algorytmów (jeśli występują)
+\item szczegóły implementacji wybranych fragmentów, zastosowane wzorce projektowe
+\item diagramy UML
+\end{itemize}
+
+
+
+Krótka wstawka kodu w linii tekstu jest możliwa, np. \lstinline|descriptor|, a nawet \lstinline|descriptor_gaussian|. 
+Dłuższe fragmenty lepiej jest umieszczać jako rysunek, np. kod na rysunku \ref{fig:pseudokod}, a naprawdę długie fragmenty – w załączniku.
+
+\begin{figure}
+\centering
+\begin{lstlisting}
+class descriptor_gaussian : virtual public descriptor
+{
+   protected:
+      /** core of the gaussian fuzzy set */
+      double _mean;
+      /** fuzzyfication of the gaussian fuzzy set */
+      double _stddev;
+      
+   public:
+      /** @param mean core of the set
+          @param stddev standard deviation */
+      descriptor_gaussian (double mean, double stddev);
+      descriptor_gaussian (const descriptor_gaussian & w);
+      virtual ~descriptor_gaussian();
+      virtual descriptor * clone () const;
+      
+      /** The method elaborates membership to the gaussian fuzzy set. */
+      virtual double getMembership (double x) const;
+     
+};
+\end{lstlisting}
+\caption{Klasa \lstinline|descriptor_gaussian|.}
+\label{fig:pseudokod}
+\end{figure}
+
+
+\chapter{Weryfikacja i walidacja}
+\begin{itemize}
+\item sposób testowania w ramach pracy (np. odniesienie do modelu V)
+\item organizacja eksperymentów
+\item przypadki testowe zakres testowania (pełny/niepełny)
+\item wykryte i usunięte błędy
+\item opcjonalnie wyniki badań eksperymentalnych
+\end{itemize}
+ 
+
+
+\chapter{Podsumowanie i wnioski}
+\begin{itemize}
+\item uzyskane wyniki w świetle postawionych celów i zdefiniowanych wyżej wymagań
+\item kierunki ewentualnych danych prac (rozbudowa funkcjonalna …)
+\item problemy napotkane w trakcie pracy
+\end{itemize}
+
+
+\begin{table}
+\centering
+\caption{Opis tabeli nad nią.}
+\label{id:tab:wyniki}
+\begin{tabular}{rrrrrrrr}
+\toprule
+	         &                                     \multicolumn{7}{c}{metoda}                                      \\
+	         \cmidrule{2-8}
+	         &         &         &        \multicolumn{3}{c}{alg. 3}        & \multicolumn{2}{c}{alg. 4, $\gamma = 2$} \\
+	         \cmidrule(r){4-6}\cmidrule(r){7-8}
+	$\zeta$ &     alg. 1 &   alg. 2 & $\alpha= 1.5$ & $\alpha= 2$ & $\alpha= 3$ &   $\beta = 0.1$  &   $\beta = -0.1$ \\
+\midrule
+	       0 &  8.3250 & 1.45305 &       7.5791 &    14.8517 &    20.0028 & 1.16396 &                       1.1365 \\
+	       5 &  0.6111 & 2.27126 &       6.9952 &    13.8560 &    18.6064 & 1.18659 &                       1.1630 \\
+	      10 & 11.6126 & 2.69218 &       6.2520 &    12.5202 &    16.8278 & 1.23180 &                       1.2045 \\
+	      15 &  0.5665 & 2.95046 &       5.7753 &    11.4588 &    15.4837 & 1.25131 &                       1.2614 \\
+	      20 & 15.8728 & 3.07225 &       5.3071 &    10.3935 &    13.8738 & 1.25307 &                       1.2217 \\
+	      25 &  0.9791 & 3.19034 &       5.4575 &     9.9533 &    13.0721 & 1.27104 &                       1.2640 \\
+	      30 &  2.0228 & 3.27474 &       5.7461 &     9.7164 &    12.2637 & 1.33404 &                       1.3209 \\
+	      35 & 13.4210 & 3.36086 &       6.6735 &    10.0442 &    12.0270 & 1.35385 &                       1.3059 \\
+	      40 & 13.2226 & 3.36420 &       7.7248 &    10.4495 &    12.0379 & 1.34919 &                       1.2768 \\
+	      45 & 12.8445 & 3.47436 &       8.5539 &    10.8552 &    12.2773 & 1.42303 &                       1.4362 \\
+	      50 & 12.9245 & 3.58228 &       9.2702 &    11.2183 &    12.3990 & 1.40922 &                       1.3724 \\
+\bottomrule
+\end{tabular}
+\end{table}  
+ 
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\backmatter 
+\stepcounter{stronyPozaNumeracja}
+\pagenumbering{Roman}
+\setcounter{page}{\value{stronyPozaNumeracja}}
+\pagestyle{tylkoNumeryStron}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+\bibliographystyle{ieeetr}
+\bibliography{bibliografia}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{appendices}
+ 
+
+\chapter*{Spis skrótów i symboli}
+
+\begin{description}
+\item[DNA] kwas deoksyrybonukleinowy (ang. \ang{deoxyribonucleic acid})
+\item[MVC] model -- widok -- kontroler (ang. \ang{model--view--controller}) 
+\item[$N$] liczebność zbioru danych
+\item[$\mu$] stopnień przyleżności do zbioru
+\item[$\mathbb{E}$] zbiór krawędzi grafu
+\item[$\mathcal{L}$] transformata Laplace'a 
+\end{description}
+
+
+\chapter*{Źródła}
+
+Jeżeli w pracy konieczne jest umieszczenie długich fragmentów kodu źródłowego, należy je przenieść do załącznika.
+
+\begin{lstlisting}
+partition fcm_possibilistic::doPartition
+                             (const dataset & ds)
+{
+   try
+   {
+      if (_nClusters < 1)
+         throw std::string ("unknown number of clusters");
+      if (_nIterations < 1 and _epsilon < 0)
+         throw std::string ("You should set a maximal number of iteration or minimal difference -- epsilon.");
+      if (_nIterations > 0 and _epsilon > 0)
+         throw std::string ("Both number of iterations and minimal epsilon set -- you should set either number of iterations or minimal epsilon.");
+   
+      auto mX = ds.getMatrix();
+      std::size_t nAttr = ds.getNumberOfAttributes();
+      std::size_t nX    = ds.getNumberOfData();
+      std::vector<std::vector<double>> mV;
+      mU = std::vector<std::vector<double>> (_nClusters);
+      for (auto & u : mU)
+         u = std::vector<double> (nX);
+      randomise(mU);
+      normaliseByColumns(mU);
+      calculateEtas(_nClusters, nX, ds);
+      if (_nIterations > 0)
+      {
+         for (int iter = 0; iter < _nIterations; iter++)
+         {
+            mV = calculateClusterCentres(mU, mX);
+            mU = modifyPartitionMatrix (mV, mX);
+         }
+      }
+      else if (_epsilon > 0)
+      {
+         double frob;
+         do 
+         {
+            mV = calculateClusterCentres(mU, mX);
+            auto mUnew = modifyPartitionMatrix (mV, mX);
+            
+            frob = Frobenius_norm_of_difference (mU, mUnew);
+            mU = mUnew;
+         } while (frob > _epsilon);
+      }
+      mV = calculateClusterCentres(mU, mX);
+      std::vector<std::vector<double>> mS = calculateClusterFuzzification(mU, mV, mX);
+      
+      partition part;
+      for (int c = 0; c < _nClusters; c++)
+      {
+         cluster cl; 
+         for (std::size_t a = 0; a < nAttr; a++)
+         {
+            descriptor_gaussian d (mV[c][a], mS[c][a]);
+            cl.addDescriptor(d);
+         }
+         part.addCluster(cl);
+      }
+      return part;
+   }
+   catch (my_exception & ex)                                  
+   {                                                       
+      throw my_exception (__FILE__, __FUNCTION__, __LINE__, ex.what()); 
+   }                                                          
+   catch (std::exception & ex)                                 
+   {                                                            
+      throw my_exceptionn (__FILE__, __FUNCTION__, __LINE__, ex.what()); 
+   }                                                            
+   catch (std::string & ex)                                     
+   {                                                            
+      throw my_exception (__FILE__, __FUNCTION__, __LINE__, ex);        
+   }                                                             
+   catch (...)                                                   
+   {                                                             
+      throw my_exception (__FILE__, __FUNCTION__, __LINE__, "unknown expection");       
+   }  
+}
+\end{lstlisting}
+ 
+
+\chapter*{Zawartość dołączonej płyty}
+
+Do pracy dołączona jest płyta CD z~następującą zawartością:
+\begin{itemize}
+\item praca (źródła \LaTeX owe i końcowa wersja w \texttt{pdf}),
+\item źródła programu,
+\item dane testowe.
+\end{itemize}
+
+\listoffigures
+\listoftables
+	
+\end{appendices}
+
+
+\end{document}
+
+
+%% Finis coronat opus.
