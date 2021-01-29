@@ -26,10 +26,10 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras import models
 from NetworkArchitecture import NetworkArchitecture
-
+import h5py
 from sklearn.utils import shuffle
 import selectiveSearch as ss
- 
+from DataPrep import create_annotations
 
 img_dir   = "VOCdevkit/VOC2012/JPEGImages"
 imgnm     = "2012_002870.jpg"
@@ -39,13 +39,14 @@ imgnm     = "2012_002870.jpg"
 class RCNN(NetworkArchitecture):
 
     warped_size = (224, 224)
+    classes=None
     X = []
     CNN_model=None
     list_of_models=['VGG16','VGG19','ResNet50','MobileNet']
     def __init__(self):
         ## show the deep learning model
        # self.modelvgg.summary()
-        
+        #self.classes=[]
         #prepared annotations
         self.df_anno = pd.read_csv("df_anno.csv")
         
@@ -251,7 +252,7 @@ class RCNN(NetworkArchitecture):
 
 
 
-    def extract_features_from_image(self,image,anno):
+    def extract_features_from_image(self,img_dir,classes):
         '''
         image np. array from which the features will be extracted
         '''
@@ -263,8 +264,11 @@ class RCNN(NetworkArchitecture):
         IoU_cutoff_not_object = 0.5
         image_pos,image_neg, info_pos,info_neg  = [],[],[],[]
         for irow in range(anno.shape[0]):
-            orig_h, orig_w, _ = image.shape
             row  = anno.iloc[irow,:]
+            path = os.path.join(img_dir,row["fileID"] + ".jpg")
+            image  = imageio.imread(path)
+            orig_h, orig_w, _ = image.shape
+            
             img = self.warp(image,self.warped_size)
             #img  = image # warp(img, )
             orig_nh, orig_nw, _ = img.shape
@@ -272,7 +276,8 @@ class RCNN(NetworkArchitecture):
             for ibb in range(row["nobj"]): 
 
                 name = row["bbx_{}_name".format(ibb)]
-
+                if not classes[name].get():
+                    break;
         
                 ## extract the bounding box of the object  
                 multx, multy  = orig_nw/orig_w, orig_nh/orig_h 
@@ -300,23 +305,24 @@ class RCNN(NetworkArchitecture):
             
                     print(IoU)
                     if IoU > IoU_cutoff_object:
-                        info_pos.append([name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]])
+                        info_pos.append([name.encode('utf-8'), prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]])
                         image_pos.append(img_bb)
                         break
                     elif IoU < IoU_cutoff_not_object:
-                        background=["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        background=["background".encode('utf-8'), prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
                         if background not in info_neg:
                             info_neg.append(background)
                             image_neg.append(img_bb)
 
        # wrapped_regions=self.wrap_regions(image,regions)
         images = image_pos+image_neg
-        infos= np.array(info_pos+info_neg)
+        infos= np.array(info_pos+info_neg,dtype=h5py.string_dtype())
 
         features = self.warp_and_create_cnn_feature(images)
 
-        return np.concatenate((infos,features),axis=1)
-
+        #np.concatenate((infos,features),axis=1)
+        return  (infos,features)
+        
 
     def wrap_regions(self,img,regions):
         wrapped_list_of_regions=[]
@@ -334,7 +340,7 @@ class RCNN(NetworkArchitecture):
         print(len(wrapped_list_of_regions))
         return(wrapped_list_of_regions)
 
-        
+
     def warp_and_create_cnn_feature(self,image):
         '''
         image  : np.array of (N image, shape1, shape2, Nchannel )

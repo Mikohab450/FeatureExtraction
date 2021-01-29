@@ -10,7 +10,7 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 import pandas as pd 
 
-def extract_single_xml_file(tree):
+def extract_single_xml_file(tree,class_names):
     nobj = 0
     row  = OrderedDict()
     for elems in tree.iter():
@@ -21,6 +21,10 @@ def extract_single_xml_file(tree):
         if elems.tag == "object":
             for elem in elems:
                 if elem.tag == "name":
+                    if str(elem.text) not in class_names:
+                        class_names.append(str(elem.text))
+                    else:  
+                        pass
                     row["bbx_{}_{}".format(nobj,elem.tag)] = str(elem.text)              
                 if elem.tag == "bndbox":
                     for k in elem:
@@ -34,17 +38,24 @@ def extract_single_xml_file(tree):
 
 def create_annotations(dir_anno):
     df_anno = []
+    class_names=[]
     for fnm in os.listdir(dir_anno):  
         if not fnm.startswith('.'): ## do not include hidden folders/files
             tree = ET.parse(os.path.join(dir_anno,fnm))
-            row = extract_single_xml_file(tree)
+            row = extract_single_xml_file(tree,class_names)
             row["fileID"] = fnm.split(".")[0]
             df_anno.append(row)
     df_anno = pd.DataFrame(df_anno)
     df_anno.to_csv("etykiety.csv",index=False) #saving data to csv
+    class_names.append("background")
+    return class_names
 
 
-
+#from collections import Counter
+#class_obj = []
+#for ibbx in range(maxNobj):
+#    class_obj.extend(df_anno["bbx_{}_name".format(ibbx)].values)
+#class_obj = np.array(class_obj)
 #print("columns in df_anno\n-----------------")
 #for icol, colnm in enumerate(df_anno.columns):
 #    print("{:3.0f}: {}".format(icol,colnm))
@@ -63,12 +74,8 @@ def create_annotations(dir_anno):
 #plt.show()
 
 
-##class distribution
-#from collections import Counter
-#class_obj = []
-#for ibbx in range(maxNobj):
-#    class_obj.extend(df_anno["bbx_{}_name".format(ibbx)].values)
-#class_obj = np.array(class_obj)
+#class distribution
+
 
 #count             = Counter(class_obj[class_obj != 'nan'])
 #print(count)
