@@ -549,6 +549,7 @@ Aff-Wild2 \cite{kollias2019expression} & 2019 &$\sim$ 2,800,000 \\
 \end{figure}
 
 \subsubsection{VGG16\cite{simonyan2014very}}
+\label{vg}
 {Stworzona w 2014 roku przez Simonyana i Zissemana, pomimo tego, że zajęła 2 miejsce w konkursie ILSVRC, jest jedną z najbardziej rozpoznawalnych sieci w dziedzinie. Simonyan i Zisseman przyjęli inną strategi – zamiast zmieniać i testować różne wielkości warstw, użyli w niej warst konwolucyjnych o stałym wymiarze 3x3 oraz próbkujących o rozmiarze 2x2, a testowali jedynie różne głębokości sieci. W ramach pracy stworzono kilka wariantów sieci o różnej głębokości. Najlepszy okazał się wariant z 16 warstwami (rys. \ref{VGG}). Ten model pokazał, że głębokość sieci jest kluczowym czynnikiem decydującym o dobrym rezultacie.}
 \begin{figure}[h!]
 \caption{Architektura sieci VGG}
@@ -565,6 +566,7 @@ Aff-Wild2 \cite{kollias2019expression} & 2019 &$\sim$ 2,800,000 \\
 
 
 \subsubsection{ResNet\cite{he2016deep}}
+\label{Res}
 {Sieć ta stworzona została przez Kaiminga He i in. i wygrała konkurs ILSVRC w 2015 roku. Jest przykładem sieci szczątkowej, w której niektóre połącznia pomiędzy warstwami są pomijane. Takie rozwiązanie pozwala na lepszą skalowalość wraz ze zwiększaniem liczby warstw oraz eliminuje problem tzw. zanikającego gradientu. Sieć ta posiada olbrzymią liczbę 152 warstw, i ta glebokość w połączeniu z nową technologią sprawiła, że przez długi czas była ona szczytowym osiągnięciem technologii.}
 
 \section{R-CNN}
@@ -629,11 +631,8 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 \subsubsection{Faster R-CNN\cite{ren2015faster}}
 {Wszystkie poprzednie metody używały algorytmu wyszukiwania selektywnego do wyznacznia propozycji regionów, jednak wraz ze wzrostem szybkości innych elementów modelu, ten algorytm stał się ,,wąskim gardłem'' obliczeniowym, dlatego postanowiono z niego zrezygnować. W ten sposób powstała architekura Faster R-CNN, jeszcze szybsza od swoich poprzedniczek, w której propozycje regionów są wyznaczane również przez równoległą sieć neuronową. Dzięki temu udało się jeszcze bardziej przyspieszyć działanie sieci, do poziomu 200 ms na obraz.}
 \subsubsection{YOLO\cite{redmon2016you}}
-{Architektura YOLO (\ang{You Only Look Once} – patrzy się tylko raz) stara się traktować problem detekcji jako problem regresji. Zamiast na cały obraz, sieć patrzy tylko na te fragmenty, w których jest bardziej prawdopodobne, że występuje jakiś obiekt. Wszystkie zadanie – lokalizację obiektów oraz klasyfikację wykonuje tylko jedna sieć, co drastycznie zwiększa szybkość tego rozwiązanie, pozwalając na zastosowanie go w celu detekcji w czasie rzeczywistym (z prędkością 45 klatek na sekundę). Wadą tego rozwiązania jest mniejsza precyzja sieci – często nie zauważa obiektów, szczególnie jeżeli są dość małe.
-\section{PASCAL VOC}
-{PASCAL VOC\cite{everingham2015pascal}\cite{PASCAL} składa się z dwóch cześci – publicznie dostępnej bazy danych, zawierajacych prawie 20 tysięcy zdjęć wraz z odpowiadającymi im adnotacjami, oraz z corocznego konkursu, organizowanego od 2005 roku, w którym różne grupy badawcze mogą zgłosić swoje rozwiązanie i spróbować swoich sił w którymś z pięciu wyzwań: klasyfikacji, detekcji, segmentacji, klasyfikacji akcji oraz rozpoznania ułożenia ciała.}
-{Dzięki takim konkursom (jak również wcześniej wspominany ILSVRC) można dokonać przeglądu najnowocześniejszych rozwiązań w dziedzinie. Dodatkowo udostępniane przez organizatorów dane są powszechnie dostępne, co pozwala każdemu zainteresowanemu dziedziną na wykorzystywanie ich we własnych projektach, tak jak właśnie zostana wykorzystane w ramach tej pracy.
-}
+{Architektura YOLO (\ang{You Only Look Once} – patrzy się tylko raz) stara się traktować problem detekcji jako problem regresji. Zamiast na cały obraz, sieć patrzy tylko na te fragmenty, w których jest bardziej prawdopodobne, że występuje jakiś obiekt. Wszystkie zadanie – lokalizację obiektów oraz klasyfikację wykonuje tylko jedna sieć, co drastycznie zwiększa szybkość tego rozwiązanie, pozwalając na zastosowanie go w celu detekcji w czasie rzeczywistym (z prędkością 45 klatek na sekundę). Wadą tego rozwiązania jest mniejsza precyzja sieci – często nie zauważa obiektów, szczególnie jeżeli są dość małe.}
+
 
  
 \chapter{Wymagania i narzędzia}
@@ -664,9 +663,29 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 \end{figure}
 
 }
+\section{Opis narzędzi}
 
+\subsection{Python}
+{Python jest językiem wysokopoziomowym językiem, który ze względu na swój rozbudowany system bibliotek oraz zwięzłą i przejrzystą składnię znajduje swoje zastosowanie w wielu dziedzinach, szczególnie tych związanych z uczeniem maszynowym. Python nie wymusza jednego paradygmatu programowania, jak np.C\#, lecz pozwala na użycie różnorodnych technik, takich jak programowanie obietkowe, programowanie strukturalne czy programowanie funkcyjne. Całość tworzonego narzędzia została stworzona właśnie w tym języku.}
+\subsection{Keras i Tensorflow}
+{Tensorflow to darmowa i otwartoźródłowa biblioteka, służąca głównie do rozwiązywania zadań z obszaru uczenia maszynowego. Keras słuzy jako to API \ang{Application Programming Interface} do biblioteki Tensorflow. Obie te biblioteki zostały użyte do implementacji konwolucyjnej sieci neuronowej. Oferują one możliwość wyborów modelów z już nauczonymi parametrami sieci (np. model VGG16, opisany w podrozdziale \ref{vg}, czy ResNet opisany w \ref{Res}).}
+\subsection{Skimage i Imageio}
+{Skimage oraz Imageio są blibliotekami języka python, które umożliwiają łatwe wczytywanie oraz przetwarzanie obrazów. W programie zostały one wykorzystane w implementacji algorytmu wyszukiwania selektywnego, jak i również do zmiany rozmiarów obrazu.}
+\subsection{Abstract Base Classes}
+{Abstract Base Classes (w skrócie – ABC) to moduł języka Python, który zapewnia infrastrukturę pozwalającą na zdefiniowanie klas abstrakcyjnych. Za jego pomocą tworzona jest abstrakcyjna klasa reprezentująca architekturę sieci. }
+\subsection{Tkinter}
+{Tkinter to biblioteka umożliwiajaca stworzenia GUI (ang. \ang{Graphical User Interface}) w Pythonie. Została użyta do stworzenia prostego interfejsu graficznego pomiędzy użytkownikiem a programem.}
+\subsection{PASCAL VOC}
+{W projekcie została wykorzystana baza danych PASCAL VOC 2012\cite{PASCAL} zawierająca 11530 obrazów z wyznaczonymi 27450 regionami zainteresowań, wraz z odpowiadającym im etykietami. Ta baza danych jest publicznie dostępna i przez lata była używana w ramach corocznego konkursu zzadać dotyczących wizji komputerowej.
+}
 
+\section{Metodyka pracy nad projektowaniem oraz implementcją}
+{Pracę rozpoczęto od ogólnego zapoznania się z dziedziną oraz zrozumienia przedstawionego zagadnienia. Dzięki powszechnie dostępnym źródłom, takich jak artykuły internetowe oraz wykłady innych uczelni udostępniane na serwisach internetowych, szybko pojęto podstawy teoretyczne uczenia maszynowego oraz zasady działania konwolucyjnych sieci neuronowych.}
 
+{Kolejnym krokiem było ustalenie wymagań projektu i wyznaczenie efektu końcowego. W celu lepszej wizualizacji wymagań stworzono również diagram przypadków użycia, ilustrujący przykładowe użycia systemu. Wymagania były następnie sukcesywnie  doprecyzowane, dzięki czemu przedstawiony problem stawał się łatwiejszy do zrozumienia.}
+
+{Następnym krokiem była analiza źródeł odnoszących się już do głównego zagadnienia pracy. Dokonano jej poprzez lekturę publikacji naukowych oraz przeglądu znanych rozwiązań. Zapoznano się również w podobymi projektami dostępnymi publicznie i ich rozwiązaniami, dzięki czemu uzyskano lepszy punkt odniesienia. Następnie dokonano wyboru odpowiednich narzędzi oraz zapoznano się z ich dokumentacją techniczną.}
+{Posiadając tą wiedzę teoretyczną, jasno przedstawiony cel oraz znajomość wybranych narzędzi, przystąpiono do implementacji projektu. Stworzono podstawowy model, do którego następnie dodawane były kolejne funkcjonalości, aż do osiągnięcia wyznaczonego efektu końcowego.}
 
 
 
@@ -836,8 +855,10 @@ class descriptor_gaussian : virtual public descriptor
 \begin{description}
 \item[RoI] Region zainteresowań  (ang. \ang{Region of Interest})
 \item[IoU] Przecięcie nad połączeniem (ang. \ang{Intersection over Union})
-\item[CUDA] ang. \ang{Compute Unified Device Architecture}
+\item[CUDA] \ang{Compute Unified Device Architecture}
 \item[ILSVRC] TODO
+\item[API] Interfejs Programowania Aplikacji(ang. \ang{Application Programming Interface})
+\item[GUI] Graficzny Interfejs Użytkownika (ang. \ang{Graphical User Interface})
 \item[DNA] kwas deoksyrybonukleinowy (ang. \ang{deoxyribonucleic acid})
 \item[MVC] model -- widok -- kontroler (ang. \ang{model--view--controller}) 
 \item[$N$] liczebność zbioru danych
