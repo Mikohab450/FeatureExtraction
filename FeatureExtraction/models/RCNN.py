@@ -305,11 +305,11 @@ class RCNN(NetworkArchitecture):
             
                     print(IoU)
                     if IoU > IoU_cutoff_object:
-                        info_pos.append([name.encode('utf-8'), prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]])
+                        info_pos.append([name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]])#.encode('utf-8')
                         image_pos.append(img_bb)
                         break
                     elif IoU < IoU_cutoff_not_object:
-                        background=["background".encode('utf-8'), prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        background=["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
                         if background not in info_neg:
                             info_neg.append(background)
                             image_neg.append(img_bb)

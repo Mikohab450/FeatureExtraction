@@ -24,14 +24,16 @@ class MainApplication(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         
-        choose_data_button=tk.Button(text="Load data",command=self.upload_dir)
+        choose_data_button=tk.Button(text="Choose annotations directory",command=self.load_annotations)
         choose_data_button.grid(row=0,column=1)
 
-        extract_feature_button=tk.Button(text="Extract Feature",command=self.extract_feature)
-        extract_feature_button.grid(row=1,column=1)
+        upload_image_button=tk.Button(text="Choose images directory",command=self.load_images)
+        upload_image_button.grid(row=1,column=1)
 
-        upload_image_button=tk.Button(text="Upload photo",command=self.upload_image)
-        upload_image_button.grid(row=2,column=1)
+        extract_feature_button=tk.Button(text="Extract Feature",command=self.extract_feature)
+        extract_feature_button.grid(row=2,column=1)
+
+
 
         button=tk.Button(text="load external architecture",command=self.add_module)
         button.grid(row=1, column=0)
@@ -55,7 +57,7 @@ class MainApplication(tk.Frame):
         button7=tk.Button(text="list models",command=self.list_models)
         button7.grid(row=1,column=2)
 
-        button8=tk.Button(text="choose classas",command=self.choose_classes)
+        button8=tk.Button(text="choose classes",command=self.choose_classes)
         button8.grid(row=3,column=2)
        
         self.v = tk.StringVar(value=1)
@@ -77,15 +79,14 @@ class MainApplication(tk.Frame):
    
     architecture_idx=0
     model_idx=0
-    img_path='C:\\Users\\Mikolaj\\Documents\\PASCAL_VOC\\VOC2012\\Test\\JPEGImages'
-    ann_path='C:\\Users\\Mikolaj\\Documents\\PASCAL_VOC\\VOC2012\\Test\\Annotations'
+    ann_path='C:\\Users\\Mikolaj\\Documents\\FeatureExtraction\\FeatureExtraction\\Test_data\\Annotations'
+    img_path='C:\\Users\\Mikolaj\\Documents\\FeatureExtraction\\FeatureExtraction\\Test_data\\JPEGImages'
     data_dir=''
     architecture = None
     classes=[]
 
-    def upload_dir(self,event=None):
-        #global data_dir
-        #data_dir = askdirectory()
+    def load_annotations(self,event=None):
+        self.ann_path= askdirectory()
         self.classes=dict.fromkeys(create_annotations(self.ann_path) , 1)
 
     def check_architecture(self):
@@ -116,9 +117,8 @@ class MainApplication(tk.Frame):
 
            # np.savetxt("test.txt",activations.flatten())
         #file = askopenfilename()
-    def upload_image(self,event=None):
-         self.img_path = askopenfilename()
-         print(self.img_path)
+    def load_images(self,event=None):
+         self.img_path= askdirectory()
 
     def add_module(self,event=None):
         
@@ -195,6 +195,7 @@ class MainApplication(tk.Frame):
             list.bind('<<ListboxSelect>>', self.onselect_model)
 
     def apply_architecture(self,event=None):
+        self.classes=dict.fromkeys(create_annotations(self.ann_path) , 1) #delete later!!!
         self.architecture = getattr(self.list_of_modules[self.architecture_idx],self.list_of_modules[self.architecture_idx].__name__ )()
 
     def train_model(self,event=None):
