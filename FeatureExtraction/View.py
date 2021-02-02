@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
+from tkinter import messagebox
 from tkinter.filedialog import askopenfilename,askdirectory
 from models import RCNN
 import skimage.util
@@ -60,17 +61,17 @@ class MainApplication(tk.Frame):
         button8=tk.Button(text="choose classes",command=self.choose_classes)
         button8.grid(row=3,column=2)
        
-        self.v = tk.StringVar(value=1)
+        self.save_type = tk.StringVar(value=1)
         tk.Radiobutton(parent, 
                        text="text",
                        padx = 100, 
-                       variable=self.v, 
+                       variable=self.save_type, 
                        value="text").grid(row=5, column=1)
 
         tk.Radiobutton(parent, 
                        text="hdf5",
                        padx = 100, 
-                       variable=self.v, 
+                       variable=self.save_type, 
                        value="hdf5").grid(row=4, column=1)
         
     #expected_class = mod_name
@@ -86,8 +87,19 @@ class MainApplication(tk.Frame):
     classes=[]
 
     def load_annotations(self,event=None):
-        self.ann_path= askdirectory()
-        self.classes=dict.fromkeys(create_annotations(self.ann_path) , 1)
+        try:
+            self.ann_path= askdirectory()
+            self.classes={i: tk.BooleanVar(value=True) for i in create_annotations(self.ann_path)}
+            #self.classes=dict.fromkeys(create_annotations(self.ann_path) , 1)
+        except:
+            messagebox.showerror("Error", "Error loading the annotations")
+
+    def load_images(self,event=None):
+        try:
+            self.img_path= askdirectory()  
+        except:
+            messagebox.showerror("Error", "Error loading the images")
+
 
     def check_architecture(self):
         if self.architecture is not None:
@@ -96,29 +108,36 @@ class MainApplication(tk.Frame):
             self.architecture = RCNN.RCNN()
 
     def extract_feature(self,event=None):
-    
-        self.check_architecture()
-        if self.img_path is not None:
-            #img = imageio.imread(img_path)
-            #img = skimage.util.img_as_float(img)
-            #annotation=create_annotations(ann_path)
-            #architecture.prepare_data(ann_path)
-            annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes)
-            if self.v.get() == "text":
-                data = np.concatenate((annotations,activations),axis=1)
-                np.savetxt("test4.txt",data,fmt="%s")
-            if self.v.get() =="hdf5":
+        if(self.save_type.get() !=("text" or "hdf5")):
+              messagebox.showwarning("Warning", "You need to choose format for saving")
+        else:
+            try:
+                self.check_architecture()
+                assert self.img_path is not None
+                assert self.ann_path is not None
+            
+                #img = imageio.imread(img_path)
+                #img = skimage.util.img_as_float(img)
+                #annotation=create_annotations(ann_path)
+                #architecture.prepare_data(ann_path)
+                annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes)
+                if self.save_type.get() == "text":
+                    data = np.concatenate((annotations,activations),axis=1)
+                    np.savetxt("test4.txt",data,fmt="%s")
+                if self.save_type.get() =="hdf5":
      
-                h5f_ann = h5py.File('annotations.h5', 'w')
-                h5f_act = h5py.File('activation.h5', 'w')
-               # data_ = np.concatenate((annotations,activations),axis=1)
-                h5f_ann.create_dataset('annotations', data=annotations)#,dtype=h5py.string_dtype(encoding='utf-8'))
-                h5f_act.create_dataset('activations', data=activations)
+                    h5f_ann = h5py.File('annotations.h5', 'w')
+                    h5f_act = h5py.File('activation.h5', 'w')
+                    # data_ = np.concatenate((annotations,activations),axis=1)
+                    h5f_ann.create_dataset('annotations', data=annotations)#,dtype=h5py.string_dtype(encoding='utf-8'))
+                    h5f_act.create_dataset('activations', data=activations)
+            except AssertionError as error:
+                 messagebox.showwarning("Error", "You need to choose data directories")
+            except Exception as exception:
+                 messagebox.showerror("Error", "Following error occured"+str(exception))
 
-           # np.savetxt("test.txt",activations.flatten())
-        #file = askopenfilename()
-    def load_images(self,event=None):
-         self.img_path= askdirectory()
+
+
 
     def add_module(self,event=None):
         
@@ -195,12 +214,13 @@ class MainApplication(tk.Frame):
             list.bind('<<ListboxSelect>>', self.onselect_model)
 
     def apply_architecture(self,event=None):
-        self.classes=dict.fromkeys(create_annotations(self.ann_path) , 1) #delete later!!!
+        temp=create_annotations(self.ann_path)
+        self.classes={i: tk.BooleanVar(value=True) for i in temp } #delete later!!!
         self.architecture = getattr(self.list_of_modules[self.architecture_idx],self.list_of_modules[self.architecture_idx].__name__ )()
 
     def train_model(self,event=None):
         if self.architecture is not None:
-            self.architecture.train()
+            pass#self.architecture.train()
 
     def load_model(self,event=None):
         pass
@@ -221,7 +241,7 @@ class MainApplication(tk.Frame):
 
             i=0
             for class_ in self.classes:
-                self.classes[class_]=tk.BooleanVar(value=True)
+                #self.classes[class_]=tk.BooleanVar(value=True)
                 l=tk.Checkbutton(newWindow, text=class_, variable=self.classes[class_])
                 l.pack()
        

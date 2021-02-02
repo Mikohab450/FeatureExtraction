@@ -11,8 +11,6 @@ import skimage
 import sys
 import pickle
 import time 
-import seaborn as sns
-import keract
 #print(os.environ['PYTHONPATH'])
 #print (os.environ['CONDA_DEFAULT_ENV'])
 import sys
@@ -26,15 +24,10 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras import models
 from NetworkArchitecture import NetworkArchitecture
-import h5py
 from sklearn.utils import shuffle
 import selectiveSearch as ss
 from DataPrep import create_annotations
-
-img_dir   = "VOCdevkit/VOC2012/JPEGImages"
-imgnm     = "2012_002870.jpg"
-
-
+import h5py
 
 class RCNN(NetworkArchitecture):
 
