@@ -22,6 +22,7 @@
 \usepackage{geometry}
 \usepackage[export]{adjustbox}
 
+
 %\usepackage[nolists,nomarkers]{endfloat}  // wersja pracy z rysunkami i tabelami na końcu
 \usepackage[page]{appendix} % toc,
 \renewcommand{\appendixtocname}{Dodatki}
@@ -92,7 +93,7 @@ escapeinside={@*}{*@},%
 \newcommand{\fleksja}{\ksremark{fleksja}}
 \newcommand{\pauza}{\ksremark{pauza `--', nie dywiz `-'}}
 \newcommand{\kolokwializm}{\ksremark{kolokwializm}}
-
+\newcommand{\twobar}{/\kern-0.2em/}
 %%%%%%%%%%%%%% END OF TODO LIST GENERATOR %%%%%%%%%%%
 
 %%%%%%%%%%%% ZYWA PAGINA %%%%%%%%%%%%%%%
@@ -348,7 +349,7 @@ Gliwice, dnia \today
 
 \begin{table}
 \centering
-
+\caption{Rozmiary zbiorów danych służących do rozpoznawania twarzy na przestrzeni lat}
 \begin{tabular}{|l|l|l|}
 \hline
 Nazwa & Rok powstania & Ilość obrazów \\
@@ -363,7 +364,7 @@ IMDB-WIKI\cite{Rothe-ICCVW-2015} & 2015 & 523051 \\
 Aff-Wild \cite{zafeiriou2017aff} & 2017 & $\sim$ 1,250,000 \\
 Aff-Wild2 \cite{kollias2019expression} & 2019 &$\sim$ 2,800,000 \\
 \end{tabular}
-\caption{Rozmiary zbiorów danych służących do rozpoznawania twarzy na przestrzeni lat}
+
 \label{tab:datasets}
 \end{table}  
 
@@ -666,7 +667,7 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 \section{Opis narzędzi}
 
 \subsection{Python}
-{Python jest językiem wysokopoziomowym językiem, który ze względu na swój rozbudowany system bibliotek oraz zwięzłą i przejrzystą składnię znajduje swoje zastosowanie w wielu dziedzinach, szczególnie tych związanych z uczeniem maszynowym. Python nie wymusza jednego paradygmatu programowania, jak np.C\#, lecz pozwala na użycie różnorodnych technik, takich jak programowanie obietkowe, programowanie strukturalne czy programowanie funkcyjne. Całość tworzonego narzędzia została stworzona właśnie w tym języku.}
+{Python jest językiem wysokopoziomowym językiem, który ze względu na swój rozbudowany system bibliotek oraz zwięzłą i przejrzystą składnię znajduje swoje zastosowanie w wielu dziedzinach, szczególnie tych związanych z uczeniem maszynowym. Python nie wymusza jednego paradygmatu programowania, jak np.C\#, lecz pozwala na użycie różnorodnych technik, takich jak programowanie obietkowe, programowanie strukturalne czy programowanie funkcyjne. Całość tworzonego projektu została stworzona właśnie w tym języku.}
 \subsection{Keras i Tensorflow}
 {Tensorflow to darmowa i otwartoźródłowa biblioteka, służąca głównie do rozwiązywania zadań z obszaru uczenia maszynowego. Keras słuzy jako to API \ang{Application Programming Interface} do biblioteki Tensorflow. Obie te biblioteki zostały użyte do implementacji konwolucyjnej sieci neuronowej. Oferują one możliwość wyborów modelów z już nauczonymi parametrami sieci (np. model VGG16, opisany w podrozdziale \ref{vg}, czy ResNet opisany w \ref{Res}).}
 \subsection{Skimage i Imageio}
@@ -676,7 +677,7 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 \subsection{Tkinter}
 {Tkinter to biblioteka umożliwiajaca stworzenia GUI (ang. \ang{Graphical User Interface}) w Pythonie. Została użyta do stworzenia prostego interfejsu graficznego pomiędzy użytkownikiem a programem.}
 \subsection{PASCAL VOC}
-{W projekcie została wykorzystana baza danych PASCAL VOC 2012\cite{PASCAL} zawierająca 11530 obrazów z wyznaczonymi 27450 regionami zainteresowań, wraz z odpowiadającym im etykietami. Ta baza danych jest publicznie dostępna i przez lata była używana w ramach corocznego konkursu zzadać dotyczących wizji komputerowej.
+{W projekcie została wykorzystana baza danych PASCAL VOC 2012\cite{PASCAL} zawierająca 11530 obrazów z wyznaczonymi 27450 regionami zainteresowań, wraz z odpowiadającym im etykietami. Ta baza danych jest publicznie dostępna i przez lata była używana w ramach corocznego konkursu z zadań dotyczących wizji komputerowej.
 }
 
 \section{Metodyka pracy nad projektowaniem oraz implementcją}
@@ -694,45 +695,84 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 
 
 \chapter{Specyfikacja zewnętrzna}
+{W tym rozdziale znajduje się opis specyfikacji zewnętrznej projektu. Opisane zostaną wymaganie sprzętowe, sposób instalacji oraz aktywacji narzędzia. Następnie przedstawiony zostanie sposób obsługi, przykład działania oraz scenariusze korzystania z systemu.}
+
+
+\section{ Wymagania sprzętowe i programowe}
+\subsection{Python }
 \begin{itemize}
-\item  wymagania sprzętowe i programowe
-\item  sposób instalacji
-\item  sposób aktywacji
-\item  kategorie użytkowników
-\item  sposób obsługi
-\item   administracja systemem
-\item  kwestie bezpieczeństwa
-\item  przykład działania
-\item  scenariusze korzystania z systemu (ilustrowane zrzutami z ekranu lub generowanymi dokumentami)
+\item {System operacyjny:}
+\begin{itemize}
+\item {Windows 7 lub nowszy}
+\item {Mac OS X 10.11 lub nowszy, 64-bitowy}
+\item {Linux RHEL 6/7, 64-bitowy}
+\end{itemize}
+\item{Procesor x86 64-bit  (Intel/AMD)}
+\item{4GB pamięci RAM}
+\item{5GB wolnej przestrzeni dyskowej}
+\end{itemize}
+
+\subsection{Tensorflow}
+\begin{itemize}
+\item{Python 3.5 lub nowszy}
+\item {System operacyjny:}
+\begin{itemize}
+\item {Windows 7 lub nowszy, 64-bitowy}
+\item {Mac OS X 10.12.6 lub nowszy, 64-bitowy}
+\item {Ubuntu 16.04 lub nowszy, 64-bitowy}
+\end{itemize}
+\item{Procesor obsługujący instrukcję AVX}
+
 \end{itemize}
  
+\section {Sposób instalacji}
+\subsection{Python}
+{W celu uruchomienia narzędzia należy posiadać zainstalowango Pythona w wersji 3.5 lub nowszej. Można to zrobić poprzez oficjalną stronę internetową, w zakładce Downloads, \url{https://www.python.org/downloads/}. Nalezy pobrać plik odpowiedni dla swojego systemu operacyjnego, a następnie uruchomić go i przejść przez proces instalacji.}
+\subsection{Instalacja narzędzia}
+{Kod narzędzia należy pobrać z publicznego repozytorium \url{https://github.com/Mikohab450/FeatureExtraction.git}. Można to zrobić na wiele sposobów, pobierajac kod bezpośrednio ze strony w formacie .zip, lub klonując repozytorium za pomocą narzędzia git w terminalu  systemowym używając komendy: }
+
+{\lstinline|$ git clone https://github.com/Mikohab450/FeatureExtraction.git| }
+
+\section{Sposób aktywacji}
+{Następnie należy zainstalować wszystkie biblioteki potrzebne do działanie programu. Można to zrobić za pomocą wbudowanego w Pythona systemu zarzadzania bibliotekami pip. W systemie Windows należy wspisać komendę:}
 
 
-\begin{figure}
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-    y tick label style={
-        /pgf/number format/.cd,
-            fixed,   % po zakomentowaniu os rzednych jest indeksowana wykladniczo
-            fixed zerofill, % 1.0 zamiast 1
-            precision=1,
-        /tikz/.cd
-    },
-    x tick label style={
-        /pgf/number format/.cd,
-            fixed,
-            fixed zerofill,
-            precision=2,
-        /tikz/.cd
-    }
-]
-\addplot [domain=0.0:0.1] {rnd};
-\end{axis} 
-\end{tikzpicture}
-\caption{Podpis rysunku po rysunkiem.}
-\label{fig:2}
-\end{figure}
+{\lstinline|C:\ > py -m pip install -r .../FeatureExtraction/FeatureExtraction/reqiurements | }
+
+{A w systemach Linux oraz Mac OS X:}
+
+
+{\lstinline|$ python -m pip install -r .../FeatureExtraction/FeatureExtraction/reqiurements| }
+
+{Gdzie w miejsce \emph{...} należy wpisać ścieżkę, do której narzędzie zostało pobrane. Następnie narzędzie można uruchomić wpisując w terminalu Windowsa}
+
+{\lstinline|C:\ > py .../FeatureExtraction/FeatureExtraction/Main.py| }
+
+{Analogicznie dla pozostałych systemów:}
+
+{\lstinline| $ python .../FeatureExtraction/FeatureExtraction/Main.py| }
+
+{bądź klikając dwukrotnie plik \textbf{Main.py.}}
+\section{Przykład działania}
+{Po uruchomieniu narzędzia pokaże nam się prosty interfejs, przedstawiony na rysunku \ref{tutajscreen}.}
+\subsection{Wybór achitektury}
+{W celu wybrania architektury sieci należy zaznaczyć architekturę z listy przy pomocy przycisku \emph{list architectures}, a następnie zainicjalizować ją kilkajac \emph{apply architecture}. Jeżeli inicjalizacja przebiegła pomyślnie, to wyświetlone zostanie okienko informujące o tym, jaka architektura jest używana. W przeciwnym razie wyświetlona zostanie okienko informujące o wystąpieniu błędu. W przypadku kliknięcia na \emph{apply architecture} bez wcześniejszego wybierania architektury z listy, użyta zostanie domyślna architektura RCNN. Jeżeli użytkownik chce wybrać architekturę, której nie ma na liście, musi ją najpierw załadować przy pomocy przycisku  \emph{load external architecture}. Po kliknięciu niego będzie miał możniwość wybrania pliku Pythona (modułu), z którego zostanie wczytana architektura. Aby zewnętrzna architektura została wczytana poprawnie, musi spełniać następujące warunki:
+\begin{itemize}
+\item Architektura musi być klasą dziedziczącą po klasie NetworkArchitecture oraz implementującą wszystkie jej metody.
+\item Nazwa pliku oraz nazwa klasy muszą być identyczne.
+\end{itemize}
+Jeżeli warunki te zostana spełnione, to po wybraniu pliku pojawi się on na liście architektur i będzie można go wybrać.}
+\subsection{Wybór modelu}
+{Analogicznie jak przy wyborze architektury, aby wybrać model należy zaznaczyć jeden z listy \emph{list models}, a następnie zainicjalizować przy pomocy \emph{apply model}. Domyślnym modelem jest VGG16 i to on zostanie użyty jeżeli nie wybierzemy inego modelu z listy. Własny model można załadować klikając \emph{load external model}. Model powinien być w formacie TensorFlow SavedModel lub Keras H5.}
+\subsection{Wybór i format danych wejściowych}
+{Dane wejściowe składają się z dwóch części – folderu ze zdjęciami w dowolnym formacie oraz folder z odpowiadającymi im adnotacjami. Adnotacje powinny mieć taką samą nazwę pliku (bez rozszerzenia) jak zdj ecie, którego dotyczą.
+Na rysunku \ref{xd}przedstawiono przykładowe zdjęcie w folderze wejściowym, a na rysunku \ref{xdd} odpowiadające mu adnotacje.}
+\subsection{Ekstrakcja cech}
+
+\begin{itemize}
+\item  scenariusze korzystania z systemu (ilustrowane zrzutami z ekranu lub generowanymi dokumentami)
+
+\end{itemize}
 
  
 
