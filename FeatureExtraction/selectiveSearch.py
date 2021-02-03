@@ -1,6 +1,5 @@
 import os 
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd 
 import scipy.misc
@@ -311,6 +310,19 @@ def merge_regions_in_order(S,R,imsize, verbose=False):
     return(regions)
 
 
+#def remove_duplicates(regions):
+#    leng=len(regions)
+#    for i,r in enumerate(regions):
+#        rectangle = r['rect']
+#        j=i+1
+#        while j<leng:
+#            if regions[j]['rect']== rectangle:
+#                del regions[j]
+#                leng=len(regions)
+#            j=j+1
+#    return regions
+
+
 def get_region_proposal(img_8bit,min_size = 500):
     img        = image_segmentation(img_8bit,min_size = min_size)
     R          = extract_region(img)    
@@ -321,7 +333,13 @@ def get_region_proposal(img_8bit,min_size = 500):
     neighbours = extract_neighbours(R)
     S          = calculate_similarlity(img,neighbours)
     regions    = merge_regions_in_order(S,R,imsize = img.shape[0] * img.shape[1])
+    #re    = remove_duplicates(regions)
+
     return(regions)
+
+
+
+    
 
 def get_IOU(xmin1,ymin1,xmax1,ymax1,
             xmin2,ymin2,xmax2,ymax2):

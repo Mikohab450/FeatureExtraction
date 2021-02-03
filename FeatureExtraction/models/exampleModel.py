@@ -9,4 +9,7 @@ class exampleModel(NetworkArchitecture):
         pass
     def train(self):
         pass
-
+    def choose_model(self):
+        pass
+    def load_model(self,path):
+        pass

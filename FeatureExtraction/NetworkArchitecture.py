@@ -8,7 +8,12 @@ class NetworkArchitecture(metaclass=abc.ABCMeta):
 
     def __init__(self):
         pass
-
+    @abc.abstractmethod
+    def load_model(self,path):
+        pass
+    @abc.abstractmethod
+    def choose_model(self):
+        pass
     @abc.abstractmethod
     def extract_features_from_image(self):
         pass

@@ -34,7 +34,6 @@ def extract_single_xml_file(tree,class_names):
     return(row)
 
 
-#df_anno = [] #panda dataframe containing annotations
 
 def create_annotations(dir_anno):
     df_anno = []
@@ -47,7 +46,7 @@ def create_annotations(dir_anno):
             df_anno.append(row)
     df_anno = pd.DataFrame(df_anno)
     df_anno.to_csv("etykiety.csv",index=False) #saving data to csv
-    class_names.append("background")
+    #class_names.append("background")
     return class_names
 
 

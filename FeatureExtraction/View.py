@@ -15,7 +15,7 @@ import os
 import h5py
 from DataPrep import create_annotations
 import sys
-global list_of_modules
+import os, psutil #only for checking memory consumption, delete later!
 
 
 class MainApplication(tk.Frame):
@@ -90,6 +90,7 @@ class MainApplication(tk.Frame):
         try:
             self.ann_path= askdirectory()
             self.classes={i: tk.BooleanVar(value=True) for i in create_annotations(self.ann_path)}
+            messagebox.showinfo("Info","Annotations were loaded and csv file was created")
             #self.classes=dict.fromkeys(create_annotations(self.ann_path) , 1)
         except:
             messagebox.showerror("Error", "Error loading the annotations")
@@ -106,9 +107,10 @@ class MainApplication(tk.Frame):
             pass
         else:
             self.architecture = RCNN.RCNN()
+            messagebox.showwarning("Architecture", "Architectures was not choosen; default RCNN architecture is being used")
 
     def extract_feature(self,event=None):
-        if(self.save_type.get() !=("text" or "hdf5")):
+        if (self.save_type.get() != "text" and self.save_type.get() !="hdf5"):
               messagebox.showwarning("Warning", "You need to choose format for saving")
         else:
             try:
@@ -131,29 +133,37 @@ class MainApplication(tk.Frame):
                     # data_ = np.concatenate((annotations,activations),axis=1)
                     h5f_ann.create_dataset('annotations', data=annotations)#,dtype=h5py.string_dtype(encoding='utf-8'))
                     h5f_act.create_dataset('activations', data=activations)
+                
+                process = psutil.Process(os.getpid())
+                print(process.memory_info().rss)  # in bytes 
+
+                messagebox.showinfo("Info","Features saved!")
             except AssertionError as error:
                  messagebox.showwarning("Error", "You need to choose data directories")
             except Exception as exception:
-                 messagebox.showerror("Error", "Following error occured"+str(exception))
+                 messagebox.showerror("Error", "Following error occured:  "+str(exception))
 
 
 
 
     def add_module(self,event=None):
-        
-        filepath=askopenfilename()
-        #f=".module_1.py"
-        #m1=import_module('test'+ f)
-    
-        if filepath != '':
-            mod_name,file_ext = os.path.splitext(os.path.split(filepath)[-1])
+        try:
+            filepath=askopenfilename()
+            #f=".module_1.py"
+            #m1=import_module('test'+ f)
+  
+            if filepath != '':
+                mod_name,file_ext = os.path.splitext(os.path.split(filepath)[-1])
 
-            #expected_class = mod_name
-            py_mod = imp.load_source(mod_name, filepath)
+                #expected_class = mod_name
+                py_mod = imp.load_source(mod_name, filepath)
     
-           # py_mod = import_module(filepath)
-            if hasattr(py_mod, mod_name):
-                self.list_of_modules.append(py_mod)
+               # py_mod = import_module(filepath)
+                if hasattr(py_mod, mod_name):
+                    self.list_of_modules.append(py_mod)
+        except:
+             messagebox.showerror("Error", "Could not load an external module")
+    
 
     def onselect(self,event):
         w = event.widget
@@ -193,6 +203,7 @@ class MainApplication(tk.Frame):
             list.bind('<<ListboxSelect>>', self.onselect)
 
     def list_models(self,event=None):
+        self.check_architecture()
         newWindow= None
         if newWindow == None:
             newWindow = Toplevel(root) 
@@ -206,7 +217,7 @@ class MainApplication(tk.Frame):
   
             list = tk.Listbox(newWindow)
             i=0
-            for model in self.list_of_models:
+            for model in self.architecture.list_of_models:
                 list.insert(i,model)
                 i=1+1
 
@@ -214,16 +225,20 @@ class MainApplication(tk.Frame):
             list.bind('<<ListboxSelect>>', self.onselect_model)
 
     def apply_architecture(self,event=None):
-        temp=create_annotations(self.ann_path)
-        self.classes={i: tk.BooleanVar(value=True) for i in temp } #delete later!!!
-        self.architecture = getattr(self.list_of_modules[self.architecture_idx],self.list_of_modules[self.architecture_idx].__name__ )()
+        self.classes={i: tk.BooleanVar(value=True) for i in create_annotations(self.ann_path) } #delete later!!!
+        try:
+            self.architecture = getattr(self.list_of_modules[self.architecture_idx],self.list_of_modules[self.architecture_idx].__name__ )()
+            messagebox.showinfo("Architecture","Architecture " + self.list_of_modules[self.architecture_idx].__name__ +" is being used")
+        except:
+             messagebox.showerror("Error", "Unexpected error occured during architecture initialization")
 
     def train_model(self,event=None):
         if self.architecture is not None:
             pass#self.architecture.train()
 
     def load_model(self,event=None):
-        pass
+        path=askopenfilename()
+        self.architecture.load_model(path)
 
     def choose_classes(self,event=None):
         newWindow= None
@@ -246,7 +261,11 @@ class MainApplication(tk.Frame):
                 l.pack()
        
     def choose_model(self,event=None):
-        self.architecture.choose_model(self.model_idx)
+        self.check_architecture()
+        try:
+            self.architecture.choose_model(self.model_idx)
+        except:
+             messagebox.showerror("Error", "Unexpected error occured during model initialization")
     
    
 

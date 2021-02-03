@@ -37,11 +37,12 @@ class RCNN(NetworkArchitecture):
     CNN_model=None
     list_of_models=['VGG16','VGG19','ResNet50','MobileNet']
     def __init__(self):
+        pass
         ## show the deep learning model
        # self.modelvgg.summary()
         #self.classes=[]
         #prepared annotations
-        self.df_anno = pd.read_csv("df_anno.csv")
+        #self.df_anno = pd.read_csv("df_anno.csv")
         
 
     def choose_model(self,idx):
@@ -245,16 +246,19 @@ class RCNN(NetworkArchitecture):
 
 
 
-    def extract_features_from_image(self,img_dir,classes):
+    def extract_features_from_image(self,img_dir,classes,IoU_cutoff_object = 0.5,IoU_cutoff_not_object = 0.5):
         '''
-        image np. array from which the features will be extracted
+        img_dir directory of images for which the features will be extracted
+        classes list containing names of classes for which the features will be extracted
+        IoU_cutoff_object the threshold above which the object is recognized (range 0-1)
+        IoU_cutoff_not_object the threshold below which a background is recognized (range 0-1)
         '''
         #imgage  = imageio.imread(path)
         
         anno = pd.read_csv("etykiety.csv")
 
-        IoU_cutoff_object     = 0.5
-        IoU_cutoff_not_object = 0.5
+        
+        
         image_pos,image_neg, info_pos,info_neg  = [],[],[],[]
         for irow in range(anno.shape[0]):
             row  = anno.iloc[irow,:]
@@ -284,7 +288,6 @@ class RCNN(NetworkArchitecture):
                 object_found_TF = 0
                 _image1 = None
                
-                print(len(regions))
                 for r in regions:
                     
                     prpl_xmin, prpl_ymin, prpl_width, prpl_height = r["rect"]
@@ -296,11 +299,17 @@ class RCNN(NetworkArchitecture):
                     img_bb = np.array(img[prpl_ymin:prpl_ymin + prpl_height,
                                           prpl_xmin:prpl_xmin + prpl_width])
             
-                    print(IoU)
                     if IoU > IoU_cutoff_object:
-                        info_pos.append([name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]])#.encode('utf-8')
-                        image_pos.append(img_bb)
-                        break
+                        found_object=[name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        if found_object not in info_pos:
+                            info_pos.append(found_object)#.encode('utf-8')
+                            image_pos.append(img_bb)
+                            background = ["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                            if background in info_neg: 
+                                    back_indx=info_neg.index(background)#if the regions figures as the background sample, delete it
+                                    del info_neg[back_indx] #from both annotations
+                                    del image_neg[back_indx] #and images list
+                            #break                                                                                      
                     elif IoU < IoU_cutoff_not_object:
                         background=["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
                         if background not in info_neg:
@@ -346,11 +355,10 @@ class RCNN(NetworkArchitecture):
         feature = self.CNN_model.predict(image)
         return(feature)
 
-        
-    def flatten_activations(self,activations):
-        for key in activations:
-                activations[key]=activations[key].ravel()
-        return activations
+       
+    def load_model(self,path):
+        self.CNN_model = keras.models.load_model(path)
+
 
     
         #wrapped_list_of_regions = warp_candidate_regions(img,regions)
