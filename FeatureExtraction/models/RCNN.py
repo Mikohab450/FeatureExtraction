@@ -44,23 +44,26 @@ class RCNN(NetworkArchitecture):
         #prepared annotations
         #self.df_anno = pd.read_csv("df_anno.csv")
         
+    def save_model(self):
+        self.CNN_model.save("TESTNET.h5")
 
     def choose_model(self,idx):
-       
-        m=self.list_of_models[idx]
-        temp=eval(m)
-        #module = importlib.import_module('keras.applications.'+m)
-        #class_ = getattr(module, m)
-        instance = temp()
+        instance=None
+        if type(self.list_of_models[idx]) is tuple:
+            instance=self.list_of_models[idx][1]
+        else:
+            m=self.list_of_models[idx]
+            temp=eval(m)
+            #module = importlib.import_module('keras.applications.'+m)
+            #class_ = getattr(module, m)
+            instance = temp()
        
         self.CNN_model = models.Model(inputs  =  instance.inputs, 
                                 outputs = instance.layers[-3].output)
         self.CNN_model.summary()
         #self.modelvgg16.
-
-
-    def add_model(self,model):
-        self.list_of_models.append(model)
+        #self.save_model() #delete later
+      
 
 
     def warp(self,img, newsize):
@@ -255,71 +258,56 @@ class RCNN(NetworkArchitecture):
         '''
         #imgage  = imageio.imread(path)
         
-        anno = pd.read_csv("etykiety.csv")
-
-        
-        
+        anno = pd.read_csv("etykiety.csv")        
         image_pos,image_neg, info_pos,info_neg  = [],[],[],[]
         for irow in range(anno.shape[0]):
             row  = anno.iloc[irow,:]
             path = os.path.join(img_dir,row["fileID"] + ".jpg")
             image  = imageio.imread(path)
-            orig_h, orig_w, _ = image.shape
-            
+            orig_h, orig_w, _ = image.shape          
             img = self.warp(image,self.warped_size)
             #img  = image # warp(img, )
             orig_nh, orig_nw, _ = img.shape
             regions = ss.get_region_proposal(img,min_size=50)[::-1]
             for ibb in range(row["nobj"]): 
-
                 name = row["bbx_{}_name".format(ibb)]
                 if not classes[name].get():
-                    break;
-        
+                    break;       
                 ## extract the bounding box of the object  
                 multx, multy  = orig_nw/orig_w, orig_nh/orig_h 
-                #image wa sscaled, so the ground truth boxes also must be scaled
+                #image was scaled, so the ground truth boxes also must be scaled
                 true_xmin     = row["bbx_{}_xmin".format(ibb)]*multx
                 true_ymin     = row["bbx_{}_ymin".format(ibb)]*multy
                 true_xmax     = row["bbx_{}_xmax".format(ibb)]*multx
-                true_ymax     = row["bbx_{}_ymax".format(ibb)]*multy
-        
-        
+                true_ymax     = row["bbx_{}_ymax".format(ibb)]*multy       
                 object_found_TF = 0
                 _image1 = None
-               
-                for r in regions:
-                    
+                for r in regions:                    
                     prpl_xmin, prpl_ymin, prpl_width, prpl_height = r["rect"]
-
                     ## calculate IoU between the candidate region and the object
                     IoU = ss.get_IOU(prpl_xmin, prpl_ymin, prpl_xmin + prpl_width, prpl_ymin + prpl_height,
                                      true_xmin, true_ymin, true_xmax, true_ymax)
                     ## candidate region numpy array
                     img_bb = np.array(img[prpl_ymin:prpl_ymin + prpl_height,
-                                          prpl_xmin:prpl_xmin + prpl_width])
-            
+                                          prpl_xmin:prpl_xmin + prpl_width])            
                     if IoU > IoU_cutoff_object:
                         found_object=[name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
-                        if found_object not in info_pos:
-                            info_pos.append(found_object)#.encode('utf-8')
-                            image_pos.append(img_bb)
-                            background = ["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
-                            if background in info_neg: 
-                                    back_indx=info_neg.index(background)#if the regions figures as the background sample, delete it
-                                    del info_neg[back_indx] #from both annotations
-                                    del image_neg[back_indx] #and images list
+                       # if found_object not in info_pos:
+                        info_pos.append(found_object)#.encode('utf-8')
+                        image_pos.append(img_bb)
+                        background = ["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        if background in info_neg: 
+                                back_indx=info_neg.index(background)#if the regions figures as the background sample, delete it
+                                del info_neg[back_indx] #from both annotations
+                                del image_neg[back_indx] #and images list
                             #break                                                                                      
                     elif IoU < IoU_cutoff_not_object:
                         background=["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
                         if background not in info_neg:
                             info_neg.append(background)
                             image_neg.append(img_bb)
-
-       # wrapped_regions=self.wrap_regions(image,regions)
         images = image_pos+image_neg
         infos= np.array(info_pos+info_neg,dtype=h5py.string_dtype())
-
         features = self.warp_and_create_cnn_feature(images)
 
         #np.concatenate((infos,features),axis=1)
@@ -357,9 +345,8 @@ class RCNN(NetworkArchitecture):
 
        
     def load_model(self,path):
-        self.CNN_model = keras.models.load_model(path)
-
-
+        model=models.load_model(path)
+        self.list_of_models.append(("External",model))
     
         #wrapped_list_of_regions = warp_candidate_regions(img,regions)
         #feature= keract.get_activations()

@@ -18,13 +18,22 @@ import sys
 import os, psutil #only for checking memory consumption, delete later!
 
 
-class MainApplication(tk.Frame):
+class View(tk.Frame):
 
 
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        
+        L1 = tk.Label(parent, text="IoU positive treshhold")
+        L2 = tk.Label(parent, text="IoU negative treshhold")
+        L1.grid(row =6,column=1)
+        L2.grid(row =6,column=0)
+        self.entry1=tk.Entry(parent,text="IoU_1")
+        self.entry2=tk.Entry(parent,text="IoU_2")
+        self.entry1.grid(row =7,column=1)
+        self.entry2.grid(row =7,column=0)
+        self.entry1.insert(0,"0.5")
+        self.entry2.insert(0, "0.5")
         choose_data_button=tk.Button(text="Choose annotations directory",command=self.load_annotations)
         choose_data_button.grid(row=0,column=1)
 
@@ -48,7 +57,7 @@ class MainApplication(tk.Frame):
         button4=tk.Button(text="train model",command=self.train_model)
         button4.grid(row=3,column=1)
 
-        button5=tk.Button(text="choose model",command=self.choose_model)
+        button5=tk.Button(text="choose model",command=self.apply_model)
         button5.grid(row=2,column=2)
 
         button6=tk.Button(text="load extrernal model",command=self.load_model)
@@ -114,30 +123,41 @@ class MainApplication(tk.Frame):
               messagebox.showwarning("Warning", "You need to choose format for saving")
         else:
             try:
-                self.check_architecture()
+                #self.check_architecture()
                 assert self.img_path is not None
                 assert self.ann_path is not None
-            
+                try:
+                    assert self.architecture is not None
+                
+                    try:
+                        assert self.architecture.CNN_model is not None
+                    
+
                 #img = imageio.imread(img_path)
                 #img = skimage.util.img_as_float(img)
                 #annotation=create_annotations(ann_path)
-                #architecture.prepare_data(ann_path)
-                annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes)
-                if self.save_type.get() == "text":
-                    data = np.concatenate((annotations,activations),axis=1)
-                    np.savetxt("test4.txt",data,fmt="%s")
-                if self.save_type.get() =="hdf5":
+                            #architecture.prepare_data(ann_path)
+                        annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes,0.6,0.4)
+                        if self.save_type.get() == "text":
+                            data = np.concatenate((annotations,activations),axis=1)
+                            np.savetxt("test4.txt",data,fmt="%s")
+                        if self.save_type.get() =="hdf5":
      
-                    h5f_ann = h5py.File('annotations.h5', 'w')
-                    h5f_act = h5py.File('activation.h5', 'w')
-                    # data_ = np.concatenate((annotations,activations),axis=1)
-                    h5f_ann.create_dataset('annotations', data=annotations)#,dtype=h5py.string_dtype(encoding='utf-8'))
-                    h5f_act.create_dataset('activations', data=activations)
-                
-                process = psutil.Process(os.getpid())
-                print(process.memory_info().rss)  # in bytes 
+                            h5f_ann = h5py.File('annotations.h5', 'w')
+                            h5f_act = h5py.File('activation.h5', 'w')
+                            # data_ = np.concatenate((annotations,activations),axis=1)
+                            h5f_ann.create_dataset('annotations', data=annotations)#,dtype=h5py.string_dtype(encoding='utf-8'))
+                            h5f_act.create_dataset('activations', data=activations)
+                        
+                        messagebox.showinfo("Info","Features saved!")
+                        process = psutil.Process(os.getpid())
+                        print(process.memory_info().rss)  # print memory usage in bytes 
 
-                messagebox.showinfo("Info","Features saved!")
+                    except AssertionError as e:
+                        messagebox.showerror("Error", "Model must be chosen")
+                except AssertionError as e:
+                    messagebox.showerror("Error", "Architecture must be chosen")
+               
             except AssertionError as error:
                  messagebox.showwarning("Error", "You need to choose data directories")
             except Exception as exception:
@@ -183,7 +203,7 @@ class MainApplication(tk.Frame):
     def list_architectures(self,event=None):
         newWindow= None
         if newWindow == None:
-            newWindow = Toplevel(root) 
+            newWindow = Toplevel(self.parent) 
   
         # sets the title of the 
         # Toplevel widget 
@@ -206,7 +226,7 @@ class MainApplication(tk.Frame):
         self.check_architecture()
         newWindow= None
         if newWindow == None:
-            newWindow = Toplevel(root) 
+            newWindow = Toplevel(self.parent) 
   
         # sets the title of the 
         # Toplevel widget 
@@ -216,15 +236,19 @@ class MainApplication(tk.Frame):
             newWindow.geometry("200x200") 
   
             list = tk.Listbox(newWindow)
-            i=0
-            for model in self.architecture.list_of_models:
-                list.insert(i,model)
-                i=1+1
+            for i,model in enumerate(self.architecture.list_of_models):
+                if type(model) is tuple:
+                      list.insert(i,model[0])
+                else:
+                      list.insert(i,model)
+              
 
             list.pack()
             list.bind('<<ListboxSelect>>', self.onselect_model)
 
     def apply_architecture(self,event=None):
+        print(self.entry1.get())
+        print(self.entry2.get())
         self.classes={i: tk.BooleanVar(value=True) for i in create_annotations(self.ann_path) } #delete later!!!
         try:
             self.architecture = getattr(self.list_of_modules[self.architecture_idx],self.list_of_modules[self.architecture_idx].__name__ )()
@@ -243,7 +267,7 @@ class MainApplication(tk.Frame):
     def choose_classes(self,event=None):
         newWindow= None
         if newWindow == None:
-            newWindow = Toplevel(root) 
+            newWindow = Toplevel(self.parent) 
   
         # sets the title of the 
         # Toplevel widget 
@@ -260,22 +284,15 @@ class MainApplication(tk.Frame):
                 l=tk.Checkbutton(newWindow, text=class_, variable=self.classes[class_])
                 l.pack()
        
-    def choose_model(self,event=None):
+    def apply_model(self,event=None):
         self.check_architecture()
         try:
             self.architecture.choose_model(self.model_idx)
+            messagebox.showinfo("Model","Currently used model: "+ self.architecture.CNN_model.name)
         except:
              messagebox.showerror("Error", "Unexpected error occured during model initialization")
     
    
 
 
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    MainApplication(root).grid()#side="top", fill="both", expand=True)
-    root.title("Feature Extraction")
-    #root.geometry("650x200")
-    root.mainloop()
 

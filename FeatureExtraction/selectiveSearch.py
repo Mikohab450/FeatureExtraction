@@ -310,17 +310,18 @@ def merge_regions_in_order(S,R,imsize, verbose=False):
     return(regions)
 
 
-#def remove_duplicates(regions):
-#    leng=len(regions)
-#    for i,r in enumerate(regions):
-#        rectangle = r['rect']
-#        j=i+1
-#        while j<leng:
-#            if regions[j]['rect']== rectangle:
-#                del regions[j]
-#                leng=len(regions)
-#            j=j+1
-#    return regions
+def remove_duplicates(regions):
+    leng=len(regions)
+    for i,r in enumerate(regions):
+        rectangle = r['rect']
+        j=i+1
+        while j<leng:
+            if regions[j]['rect']== rectangle:
+                del regions[j]
+                leng=len(regions)
+            else:
+                j=j+1
+    return regions
 
 
 def get_region_proposal(img_8bit,min_size = 500):
@@ -333,9 +334,9 @@ def get_region_proposal(img_8bit,min_size = 500):
     neighbours = extract_neighbours(R)
     S          = calculate_similarlity(img,neighbours)
     regions    = merge_regions_in_order(S,R,imsize = img.shape[0] * img.shape[1])
-    #re    = remove_duplicates(regions)
+    no_duplicates    = remove_duplicates(regions)
 
-    return(regions)
+    return(no_duplicates)
 
 
 

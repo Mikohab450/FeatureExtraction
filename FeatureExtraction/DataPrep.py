@@ -46,7 +46,6 @@ def create_annotations(dir_anno):
             df_anno.append(row)
     df_anno = pd.DataFrame(df_anno)
     df_anno.to_csv("etykiety.csv",index=False) #saving data to csv
-    #class_names.append("background")
     return class_names
 
 
