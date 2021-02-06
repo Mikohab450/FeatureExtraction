@@ -639,7 +639,7 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 
  
 \chapter{Wymagania i narzędzia}
-{W tym rozdziale zostanie dokonany opis wymagań funkcjonalnych oraz niefunkcjonalnych pracy, oraz zaprezentowane zostaną diagramy przypadkow użycia. Następnia omówiona zostana użyte narzędzia oraz opisana zostania metodyka pracy nad projektowaniem i implenetacją.}
+{W tym rozdziale zostanie dokonany opis wymagań funkcjonalnych oraz niefunkcjonalnych pracy oraz zaprezentowane zostaną diagramy przypadkow użycia. Następnia omówiona będą użyte narzędzia oraz opisana zostania metodyka pracy nad projektowaniem i implemetacją.}
 \section{Wymaganie funkcjonalne i niefunkcjonalne}
 \subsection{Wymagania funkcjonalne}
 {Projekt powinien realizować następujące funkcjonalności:
@@ -651,16 +651,17 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
   \item{Użytkownik ma mieć możliwość wyboru formatu, w którym zostaną zapisane (tekst lub hdf5).}
   \item{Powinna istnieć możliwość wyboru dowolnych danych wejściowych, zgodnych z formatem PASCAL VOC, i to na tych danych zostanie wykonana ekstrakcja.}
   \item{Powinna istnieć możliwość wybrania klas, dla których zostanie dokonana esktrakcja}
-  \item{W ramach projektu zostanie zaimplementowana architektura R-CNN i będzie ona domyślnie używaną architekturą (jeżeli użytkownik nie wskaże innej).}
+  \item{W ramach projektu zostanie zaimplementowana architektura R-CNN i będzie domyślnie używaną architekturą (jeżeli użytkownik nie wskaże innej).}
 \end{itemize}}
 \subsection{Wymagania niefunkcjonalne}
-{}
+{Projekt powinien działać na dowolnym systemie operacyjnym (Windows, macOS X, Linux). Szacowany czas wykonywania ekstrakcji może zająć nawet do kilkudziesięciu sekund na jeden obraz, dlatego dla dużych zbiorów obrazów proces może trwać nawet kilka dni. }
 \section{Diagram przypadków użycia}
+{Na rysunku \ref{usecase} przedstawiono diagram przypadków użycia, który obrazuje wszystkie funkcjonalości systemu.}
 {
 \begin{figure}[h!]
 
 \centering
-\includegraphics[scale=0.4]{usecase.png}
+\includegraphics[scale=0.40]{usecase.png}
 \caption{Diagram przypadków użycia}
 \label{usecase}
 \end{figure}
@@ -669,11 +670,11 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 \section{Opis narzędzi}
 
 \subsection{Python}
-{Python jest językiem wysokopoziomowym językiem, który ze względu na swój rozbudowany system bibliotek oraz zwięzłą i przejrzystą składnię znajduje swoje zastosowanie w wielu dziedzinach, szczególnie tych związanych z uczeniem maszynowym. Python nie wymusza jednego paradygmatu programowania, jak np.C\#, lecz pozwala na użycie różnorodnych technik, takich jak programowanie obietkowe, programowanie strukturalne czy programowanie funkcyjne. Całość tworzonego projektu została stworzona właśnie w tym języku.}
+{Python jest wysokopoziomowym językiem, który ze względu na swój rozbudowany system bibliotek oraz zwięzłą i przejrzystą składnię znajduje swoje zastosowanie w wielu dziedzinach, szczególnie tych związanych z uczeniem maszynowym. Python nie wymusza jednego paradygmatu programowania, jak np.C\#, lecz pozwala na użycie różnorodnych technik, takich jak programowanie obietkowe, programowanie strukturalne czy programowanie funkcyjne. Całość tworzonego projektu została stworzona właśnie w tym języku.}
 \subsection{Keras i Tensorflow}
-{Tensorflow to darmowa i otwartoźródłowa biblioteka, służąca głównie do rozwiązywania zadań z obszaru uczenia maszynowego. Keras słuzy jako to API \ang{Application Programming Interface} do biblioteki Tensorflow. Obie te biblioteki zostały użyte do implementacji konwolucyjnej sieci neuronowej. Oferują one możliwość wyborów modelów z już nauczonymi parametrami sieci (np. model VGG16, opisany w podrozdziale \ref{vg}, czy ResNet opisany w \ref{Res}).}
+{Tensorflow to darmowa i otwartoźródłowa biblioteka, służąca głównie do rozwiązywania zadań z obszaru uczenia maszynowego. Keras słuzy jako to API (ang. \ang{Application Programming Interface}) do biblioteki Tensorflow. Obie te biblioteki zostały użyte do implementacji konwolucyjnej sieci neuronowej. Oferują one możliwość wyborów modelów z już nauczonymi parametrami sieci (np. model VGG16, opisany w podrozdziale \ref{vg}, czy ResNet opisany w \ref{Res}).}
 \subsection{Skimage i Imageio}
-{Skimage oraz Imageio są blibliotekami języka python, które umożliwiają łatwe wczytywanie oraz przetwarzanie obrazów. W programie zostały one wykorzystane w implementacji algorytmu wyszukiwania selektywnego, jak i również do zmiany rozmiarów obrazu.}
+{Skimage oraz Imageio są blibliotekami języka python, które umożliwiają łatwe wczytywanie oraz przetwarzanie obrazów. W programie zostały one wykorzystane w implementacji algorytmu wyszukiwania selektywnego, jak i również do zmian rozmiarów obrazów.}
 \subsection{Abstract Base Classes}
 \label{abc}
 {Abstract Base Classes (w skrócie – ABC) to moduł języka Python, który zapewnia infrastrukturę pozwalającą na zdefiniowanie klas abstrakcyjnych. Za jego pomocą tworzona jest abstrakcyjna klasa reprezentująca architekturę sieci. }
@@ -684,11 +685,11 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 }
 
 \section{Metodyka pracy nad projektowaniem oraz implementcją}
-{Pracę rozpoczęto od ogólnego zapoznania się z dziedziną oraz zrozumienia przedstawionego zagadnienia. Dzięki powszechnie dostępnym źródłom, takich jak artykuły internetowe oraz wykłady innych uczelni udostępniane na serwisach internetowych, szybko pojęto podstawy teoretyczne uczenia maszynowego oraz zasady działania konwolucyjnych sieci neuronowych.}
+{Pracę rozpoczęto od ogólnego zapoznania się z dziedziną oraz zrozumienia przedstawionego zagadnienia. Dzięki powszechnie dostępnym źródłom, takim jak artykuły internetowe oraz wykłady innych uczelni udostępniane na serwisach internetowych, szybko pojęto podstawy teoretyczne uczenia maszynowego oraz zasady działania konwolucyjnych sieci neuronowych.}
 
 {Kolejnym krokiem było ustalenie wymagań projektu i wyznaczenie efektu końcowego. W celu lepszej wizualizacji wymagań stworzono również diagram przypadków użycia, ilustrujący przykładowe użycia systemu. Wymagania były następnie sukcesywnie  doprecyzowane, dzięki czemu przedstawiony problem stawał się łatwiejszy do zrozumienia.}
 
-{Następnym krokiem była analiza źródeł odnoszących się już do głównego zagadnienia pracy. Dokonano jej poprzez lekturę publikacji naukowych oraz przeglądu znanych rozwiązań. Zapoznano się również w podobymi projektami dostępnymi publicznie i ich rozwiązaniami, dzięki czemu uzyskano lepszy punkt odniesienia. Następnie dokonano wyboru odpowiednich narzędzi oraz zapoznano się z ich dokumentacją techniczną.}
+{Następnym krokiem była analiza źródeł odnoszących się już do głównego zagadnienia pracy. Dokonano jej poprzez lekturę publikacji naukowych oraz przeglądu znanych rozwiązań. Zapoznano się również z podobymi projektami dostępnymi publicznie i ich rozwiązaniami, dzięki czemu uzyskano lepszy punkt odniesienia. Następnie dokonano wyboru odpowiednich narzędzi oraz zapoznano się z ich dokumentacją techniczną.}
 {Posiadając tą wiedzę teoretyczną, jasno przedstawiony cel oraz znajomość wybranych narzędzi, przystąpiono do implementacji projektu. Stworzono podstawowy model, do którego następnie dodawane były kolejne funkcjonalości, aż do osiągnięcia wyznaczonego efektu końcowego.}
 
 
@@ -734,7 +735,7 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 \subsection{Instalacja narzędzia}
 {Kod narzędzia należy pobrać z publicznego repozytorium \url{https://github.com/Mikohab450/FeatureExtraction.git}. Można to zrobić na wiele sposobów, pobierajac kod bezpośrednio ze strony w formacie .zip, lub klonując repozytorium za pomocą narzędzia git w terminalu  systemowym używając komendy: }
 
-{\lstinline|$ git clone https://github.com/Mikohab450/FeatureExtraction.git| }
+{\lstinline|$ git clone https://\emph{github.com/Mikohab450/FeatureExtraction.git}| }
 
 \section{Sposób aktywacji}
 {Następnie należy zainstalować wszystkie biblioteki potrzebne do działanie programu. Można to zrobić za pomocą wbudowanego w Pythona systemu zarzadzania bibliotekami pip. W systemie Windows należy wspisać komendę:}
@@ -757,25 +758,35 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 
 {bądź klikając dwukrotnie plik \textbf{Main.py.}}
 \section{Przykład działania}
-{Po uruchomieniu narzędzia pokaże nam się prosty interfejs, przedstawiony na rysunku \ref{tutajscreen}.}
+{Po uruchomieniu narzędzia pokaże nam się prosty interfejs, przedstawiony na rysunku \ref{interface}. Za jego pomocą możemy wykorzystywać różne funkcjonalości systemu.}
+
+
+\begin{figure}[h!]
+\caption{Interfejs programu}
+
+\centering
+\includegraphics[scale=0.9]{interface.png}
+\label{interface}
+\end{figure}
+
 \subsection{Wybór achitektury}
 {W celu wybrania architektury sieci należy zaznaczyć architekturę z listy przy pomocy przycisku \emph{list architectures}, a następnie zainicjalizować ją kilkajac \emph{apply architecture}. Jeżeli inicjalizacja przebiegła pomyślnie, to wyświetlone zostanie okienko informujące o tym, jaka architektura jest używana. W przeciwnym razie wyświetlona zostanie okienko informujące o wystąpieniu błędu. W przypadku kliknięcia na \emph{apply architecture} bez wcześniejszego wybierania architektury z listy, użyta zostanie domyślna architektura RCNN. Jeżeli użytkownik chce wybrać architekturę, której nie ma na liście, musi ją najpierw załadować przy pomocy przycisku  \emph{load external architecture}. Po kliknięciu niego będzie miał możniwość wybrania pliku Pythona (modułu), z którego zostanie wczytana architektura. Aby zewnętrzna architektura została wczytana poprawnie, musi spełniać następujące warunki:
 \begin{itemize}
 \item Architektura musi być klasą dziedziczącą po klasie NetworkArchitecture oraz implementującą wszystkie jej metody.
 \item Nazwa pliku oraz nazwa klasy muszą być identyczne.
 \end{itemize}
-Jeżeli warunki te zostana spełnione, to po wybraniu pliku pojawi się on na liście architektur i będzie można go wybrać.}
+Jeżeli warunki te zostaną spełnione, to po wybraniu pliku pojawi się on na liście architektur i będzie można go wybrać.}
 \subsection{Wybór modelu}
-{Analogicznie jak przy wyborze architektury, aby wybrać model należy zaznaczyć jeden z listy \emph{list models}, a następnie zainicjalizować przy pomocy \emph{apply model}. Domyślnym modelem jest VGG16 i to on zostanie użyty jeżeli nie wybierzemy inego modelu z listy. Własny model można załadować klikając \emph{load external model}. Model powinien być w formacie TensorFlow SavedModel lub Keras H5.}
+{Analogicznie jak przy wyborze architektury, aby wybrać model należy zaznaczyć jeden z listy \emph{list models}, a następnie zainicjalizować przy pomocy \emph{apply model}. Należy pamiętać, że przed wybraniem modelu należy wybrać architekturę. Domyślnym modelem jest VGG16 i to on zostanie użyty jeżeli nie wybierzemy inego modelu z listy. Własny model można załadować klikając \emph{load external model}. Model powinien być w formacie TensorFlow SavedModel lub Keras H5 i mieć wejście o wymiarze 224x224x3.}
 \subsection{Wybór i format danych wejściowych}
 {Dane wejściowe składają się z dwóch części – folderu ze zdjęciami w dowolnym formacie oraz folderu z odpowiadającymi im adnotacjami. Adnotacje powinny mieć taką samą nazwę pliku (bez rozszerzenia) jak zdjęcie, którego dotyczą. Folder za zdjeciami możemy wybrać klikając w przycisk \emph{Choose images directory}, a folder z adnotacjami poprzez \emph{Choose annotations directory}. 
-Na rysunku \ref{example}przedstawiono przykładowe zdjęcie w folderze wejściowym, wzięta z bazy danych PASCAL VOC, a na rysunku \ref{etykieta} pokazano plik zawierający adnotacje do tego zdjęcia.}
+Na rysunku \ref{example} przedstawiono przykładowe zdjęcie w folderze wejściowym, wzięta z bazy danych PASCAL VOC, a na rysunku \ref{etykieta} pokazano plik zawierający adnotacje do tego zdjęcia.}
 
 \begin{figure}[h!]
 \caption{Wybrany obraz z bazy PASCAL VOC}
 
 \centering
-\includegraphics[scale=0.2]{2007_000799.jpg}
+\includegraphics[scale=0.4]{2007_000799.jpg}
 \label{example}
 \end{figure}
 
@@ -828,13 +839,13 @@ Na rysunku \ref{example}przedstawiono przykładowe zdjęcie w folderze wejściow
 \centering
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
 \hline
-Nazwa klasy & wymiary & xmin & ymin & xmax & ymax & ID pliku & wektor \\
+Nazwa klasy & IoU & xmin & ymin & xmax & ymax & ID pliku & wektor \\
 \hline
 
 \end{tabular}
 \end{table}  
 {Gdzie \emph{xmin}, \emph{ymin}, \emph{xmax}, \emph{xmax} oznaczają cztery wiechołki prostokątu, z którego ektrahowano cechy. W tablicy \ref{cechy} przedstawiono fragment próbki danych wyektrahowanych ze zdjęcia z rysunku \ref{example}. Ponieważ wektor cech mają 4096 liczb, pozwolono sobie je tutaj skrócić do tylko dwóch pierwszych.}
-{W przypadku zapisu w formacie hdf5 etykiety zapisywane są w pliku \emph{annotations.h5, a wektory w pliku \emph{activations.h5}.}
+{W przypadku zapisu w formacie hdf5 etykiety zapisywane są w pliku \emph{annotations.h5}, a wektory w pliku \emph{activations.h5}.}
 \label{format}
 
 
@@ -842,13 +853,13 @@ Nazwa klasy & wymiary & xmin & ymin & xmax & ymax & ID pliku & wektor \\
 \begin{table}[h!]
 \centering
 \caption{Fragment przykładowych wyektrahowanych danych}
-\begin{tabular}{|l|l|l|l|l|l|l|}
-horse & 0 & 0 & 223 & 223 & 2007\_000799 & 0.614785432 2.24941 [...]\\
-horse & 0 & 0 & 223 & 218 & 2007\_000799 &  0.634443283 2.2379 [...]\\
-horse & 43 & 55 & 223 & 168 & 2007\_000799 & 0.713880411 2.0658 [...]\\
-person & 43 & 101 & 180 & 122 & 2007\_000799 & 0.74330669 2.33210 [...] \\
-background & 97 & 157 & 14 & 38 & 2007\_000799 & 1.035556 1.999945 [...]\\
-background & 99 & 152 & 12 & 30 & 2007\_000799 & 0.7487751 2.020392[...]\\
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+horse & 0.76 & 0 & 0 & 223 & 223 & 2007\_000799 & 0.614785432 2.24941 [...]\\
+horse & 0.77 &0 & 0 & 223 & 218 & 2007\_000799 &  0.634443283 2.2379 [...]\\
+horse &  0.66 &43 & 55 & 223 & 168 & 2007\_000799 & 0.713880411 2.0658 [...]\\
+person & 0.73 & 43 & 101 & 180 & 122 & 2007\_000799 & 0.74330669 2.33210 [...] \\
+background & 0.02 & 97 & 157 & 14 & 38 & 2007\_000799 & 1.035556 1.999945 [...]\\
+background & 0.12 &99 & 152 & 12 & 30 & 2007\_000799 & 0.7487751 2.020392[...]\\
 \end{tabular}
 \label{cechy}
 \end{table}
@@ -857,7 +868,7 @@ background & 99 & 152 & 12 & 30 & 2007\_000799 & 0.7487751 2.020392[...]\\
 \subsubsection{Wybór klas}
 {Klikając w przycisk \emph{choose classes} możemy dokonać wyboru klas, które podlegają ekstrakcji. Należy pamiętać, że najpierw należy wybrać folder z etykietami, a dopiero później ograniczać klasy. W przypadku wykonania tych kroków w odwrotnej kolejności wyświetlona lista z klasami będzie pusta.}
 \subsubsection{Wybór progów IoU}
-{Wpisując liczby w pola \emph{IoU positive treshold} i \emph{IoU negative treshold} można wybrać jaki będzie próg oceny, czy dana etykieta jest lub nie jest obiektem (wiecej o tym w rozdziale \ref{iou}. Wartości te powinny być z przedziału 0-1, logicznym również jest założenie że próg próbek pozytywnych będzie większy lub równy progowi próbek negatywnych, choć nie jest to konieczne. Domyślnie obie zmienne przyjmują wartość 0.5.)}
+{Wpisując liczby w pola \emph{IoU positive treshold} i \emph{IoU negative treshold} można wybrać jaki będzie próg oceny, czy dana etykieta jest lub nie jest obiektem (wiecej o tym w rozdziale \ref{iou}). Wartości te powinny być z przedziału 0-1, logicznym również jest założenie że próg próbek pozytywnych będzie większy lub równy progowi próbek negatywnych, choć nie jest to konieczne. Domyślnie obie zmienne przyjmują wartość 0.5.}
 
 
  
@@ -867,31 +878,32 @@ background & 99 & 152 & 12 & 30 & 2007\_000799 & 0.7487751 2.020392[...]\\
 \section{Przedstawienie idei}
 {Idea projektu zakładała stworzenie uniwersalnego narzędzia, które zawierałoby w sobie zaimplementowaną architekturę sieci, lecz umożliwiało łatwą rozbudowę o inne architektury. W tym celu połączono mechanikę dziedziczenia oraz dynamicznego ładowania modułów. Do implementacji architektury potrzebne były trzy elementy: odczyt danych, wyznaczenie regionów oraz sieć konwolucyjna. Przy implementacji architektury zadbano o to, aby odczyt danych oraz algorytm selektywnej selekcji służący do wyznaczanie regionów były zaimplementowane jako osobne moduły, dzięki czemu działają niezależnie od reszty rozwiązania.}
 \section{Architektura systemu}
-{Główną klasą narzędzia klasa \lstinline|View|,  jest odpowiedzialna za wyświetlenie interfejsu graficznego i wykonywanie zadanych funkcjonalności. Działa ona na obiekcie \lstinline|NetworkArchitecture|, który rezprezentuje architekturę sieci. oraz korzysta z modułu \lstinline|DataPrep.py| w celu przetworzenia adnotacji i zapisania ich w odpowiednim formacie.}
+{Główną klasą narzędzia klasa \lstinline|View|,  jest odpowiedzialna za wyświetlenie interfejsu graficznego i wykonywanie zadanych funkcjonalności. Działa ona na obiekcie \lstinline|NetworkArchitecture|, który rezprezentuje architekturę sieci, oraz korzysta z modułu \lstinline|DataPrep.py| w celu przetworzenia adnotacji i zapisania ich w odpowiednim formacie.}
 \section{Opis najważniejszych klas oraz modułów}
 \subsection{NetworkArchitecture.py}
-{Moduł zawiera klasę \lstinline|NetworkArchitecture|, która jest klasą abstrakcyjną reprezentującą architekturę sieci. Klasy abstrakcyjne nie są wbudowane w Pythona, dlatego aby osiągnąć ten efekt klasa ta dziedziczy bo klasie \textbf{ABCMeta} z pakietu acb opisanego w podrozdziale \ref{abc}. Klasa ta zawiera następujące metody:}
+{Moduł zawiera klasę \lstinline|NetworkArchitecture|, która jest klasą abstrakcyjną reprezentującą architekturę sieci. Klasy abstrakcyjne nie są wbudowane w Pythona, dlatego aby osiągnąć ten efekt klasa ta dziedziczy bo klasie \textbf{ABCMeta} z pakietu \textbf{abc} opisanego w podrozdziale \ref{abc}. Klasa ta zawiera następujące metody:}
 \begin{itemize}
-\item {\lstinline|extract_features_from_image(self,img_dir,classes,cut_1,cut_2)|}
-\item{\lstinline| choose_model(self,idx)|}
-\item{\lstinline| load_model(self,path)|}
+\item {\lstinline|extract_features_from_image|}
+\item{\lstinline|choose_model|}
+\item{\lstinline|load_model|}
 \end{itemize}
-{W celu stworzenia klasy dziedziczacej należy te metody w niej poprawnie zaimplementować. Dodatkowo klasa ta posiada dwa pola\textbf{CNN\_model} oraz \textbf{list\_of\_models}. W pierwszym przechowywany jest sieć konwolucyjna, drugie przechowuje listę dostępnych modeli. Przy implemetacji klasy dziedziczącej należy pamiętać o tym, żeby tych właśnie pól używać przy wczytywaniu i inicjalizaji modeli, ponieważ w przeciwnym razie klasa dziedzicząca nie będzie kompatybilna z resztą programu.}
+{W celu stworzenia klasy dziedziczacej należy te metody w niej poprawnie zaimplementować. Dodatkowo klasa ta posiada dwa pola \textbf{CNN\_model} oraz \textbf{list\_of\_models}. W pierwszym przechowywany jest sieć konwolucyjna, drugie przechowuje listę dostępnych modeli. Przy implemetacji klasy dziedziczącej należy pamiętać o tym, żeby tych właśnie pól używać przy wczytywaniu i inicjalizaji modeli, ponieważ w przeciwnym razie klasa dziedzicząca nie będzie kompatybilna z resztą programu.}
 
 \subsection{DataPrep.py}
-{Moduł ten zawiera funkcje pozwalające na przetworzenie wejściowego folderu z adnotacjami oraz zapisanie tylko tych istotnych adnotacji do pliku csv. Poprzez adnotacje mogą zawierać również dodatkowe informacje o obiekcie, które są potrzebne do innych zadań (np. do segmentacji czy rozpoznawania akcji). Do zadań klasyfikacji potrzebujemy jedynie nazwe obiekty oraz obwolutę, w której się znajduje, dlatego odczytujemy tylko te dane a następnie zapisujemy je w formacie, z którego łatwo będzie je później odczytać. }
+{Moduł ten zawiera funkcje pozwalające na przetworzenie wejściowego folderu z adnotacjami oraz zapisanie tylko tych istotnych adnotacji do pliku csv. Nie zapisujemy wszystkich danych z adnotacji, ponieważ mogą one zawierać również dodatkowe informacje o obiekcie, które są potrzebne do innych zadań (np. do segmentacji czy rozpoznawania akcji). Do zadań klasyfikacji potrzebujemy jedynie nazwe obiektu oraz obwolutę, w której się znajduje, dlatego odczytujemy tylko te dane a następnie zapisujemy je w formacie, z którego łatwo będzie je później odczytać. }
 \subsection{SelectiveSearch.py}
-{Moduł zawiera funkcje odpowiedzialną na implementację alogrytmu wyszukiwania selektywnego, opisanego w podrozdziale \ref{ss}. Do obliczania podobieństwa użyto wizualnego deskryptora nazywanego localnymi wzorami binarnymi (ang. \ang. Local Binary Pattern) so jest drobym odstępstwem od wczesniej opisanej metody, lecz zasadniczo nie zmienia jej działania. }
+{Moduł zawiera funkcje odpowiedzialną na implementację alogrytmu wyszukiwania selektywnego, opisanego w podrozdziale \ref{ss}. Do obliczania podobieństwa użyto wizualnego deskryptora nazywanego localnymi wzorami binarnymi (\ang  ang. Local Binary Patterns), co jest drobym odstępstwem od wcześniej opisanej metody, lecz zasadniczo nie zmienia jej działania. }
 \subsection{RCNN.py}
-{Moduł zawierający klasę \textbf{RCNN}, która implementuje tą właśnie architekturę sieci, opisaną dokładniej w rozdziale \ref{rcnn}. Klasa ta dziedziczy na klasie \lstinline|NetworkArchitecture|. }
+{Moduł zawiera klasę \textbf{RCNN}, która implementuje tą właśnie architekturę sieci, opisaną dokładniej w rozdziale \ref{rcnn}. Klasa ta dziedziczy po klasie \lstinline|NetworkArchitecture|. }
 \subsection{View.py}
 {W tym module znajduje się klasa \textbf{View.py}, która odpowiada za interfejs graficzny programu. Dziedziczy ona po klasie \lstinline|tkinter.Frame| i jest singletonem, tworzonym i wywoływanym przez główny program.}
 \subsection{main.py}
-{Moduł służący do uruchomienia projektu. Inicjalizuje instancję clasy \textbf{View} i tworzy główną pętle programu.}
+{Moduł służący do uruchomienia projektu. Inicjalizuje instancję klasy \textbf{View} i tworzy główną pętle programu.}
 
 \section{Opis najważniejszych metod i funkcji}
-{ Funkcja \lstinline|create_annotations()| pokazana na rysunku \ref{dataprep} pobiera jako argument ścieżkę do folderu z adnotacjami, a następnie za pomocą funkcji \lstinline|extract_single_xml_file| odczytuje potrzebne informacje ze wszystkich plików z tego folderu  i zapisuje je w liście, która jest następnie konwertowana do typu \textbf{DataFrame} biblioteki pandas. Ten typ jest przeznaczony do przechowywania danych w postaci tabelarycznej i ma wbudowaną metodę \lstinline|to_csv| umożliwiająca zapis do formatu csv. Używając tej metody zapisujemy potrzebne etykiety w folderze roboczym, aby móc później z nich skorzystać. Funkcja zwraca listę z nazwami wszystkich klas odczytanych z adnotacji.}
-\begin{figure}
+\subsection{ \lstinline|create_annotations|}
+{ Funkcja \lstinline|create_annotations| pokazana na rysunku \ref{dataprep}, znajduje się module \textbf{DataPrep.py} i pobiera jako argument ścieżkę do folderu z adnotacjami, a następnie za pomocą funkcji \lstinline|extract_single_xml_file| odczytuje potrzebne informacje ze wszystkich plików z tego folderu  i zapisuje je w liście, która jest następnie konwertowana do typu \textbf{DataFrame} biblioteki pandas. Ten typ jest przeznaczony do przechowywania danych w postaci tabelarycznej i ma wbudowaną metodę \lstinline|to_csv| umożliwiająca zapis do formatu csv. Używając tej metody zapisujemy potrzebne etykiety w folderze roboczym, aby móc później z nich skorzystać. Funkcja zwraca listę z nazwami wszystkich klas odczytanych z adnotacji.}
+\begin{figure}[h!]
 \centering
 \begin{lstlisting}
 def create_annotations(dir_anno):
@@ -911,10 +923,9 @@ def create_annotations(dir_anno):
 \caption{Definicja funkcji \lstinline|create_annotations|}
 \label{dataprep}
 \end{figure}
-\subsection{SelectiveSearch}
- Funkcja  \lstinline|get_region_proposal|, pokazana na rysunku \ref{search}, przyjmuje jako argument wejściowy obraz, dla którego regiony maja być wyznaczone. Następnie. Funkcja \lstinline|get_IOU|, która jest implementacją operatora opisanego w podrozdziale \ref{iou}.
-}
-\begin{figure}
+\subsection{\lstinline|get_region_proposal|}
+ Funkcja \lstinline|get_region_proposal|, która znajduje się w module \textbf{SelectiveSearch}, pokazana jest na rysunku \ref{search}. Przyjmuje ona jako argument wejściowy obraz, dla którego regiony maja być wyznaczone. Zwraca listę słowników zawierających wyznaczone regiony.}
+\begin{figure}[h!]
 \centering
 \begin{lstlisting}
 def get_region_proposal(img_8bit,min_size = 500):
@@ -928,32 +939,54 @@ def get_region_proposal(img_8bit,min_size = 500):
     S  = calculate_similarlity(img,neighbours)
     regions = merge_regions_in_order(S,R,imsize = img.shape[0] * img.shape[1])
     no_duplicates  = remove_duplicates(regions)
-
     return(no_duplicates)
 \end{lstlisting}
 \caption{Definicja funkcji  \lstinline|get_region_proposal|}
 \label{search}
 \end{figure}
-\subsection{}
 
+\subsection{ \lstinline|warp_and_create_cnn_feature|}
+{Metoda te zdefiniowana jest w klasie \textbf{RCNN} i oblicza cechy głębokie dla otrzymanej listy obrazów \textbf{image}. Dla każdego obrazu z listy najpierw zmienia jego rozmiar za pomocą metody \lstinline|warp| tak, aby jego wymiary były kompatybilne z wejściem sieci konwolucyjnem. Obraz jest przepuszczany przez sieć poprzez użycie wbudowanej metody \textbf{predict}, która operuje na modelu sieci neuronowej, który jest obiekem klasy \textbf{Model} z biblioteki \emph{Keras}. }
+\begin{figure}[h!]
+\centering
+\begin{lstlisting}
+    def warp_and_create_cnn_feature(self,image):
+        for irow in range(len(image)):
+            image[irow] = self.warp(image[irow],self.warped_size)
+        image = np.array(image)
+        feature = self.CNN_model.predict(image)
+        return(feature)
+\end{lstlisting}
+\caption{Defnicja funkcji \lstinline|warp_and_create_cnn_feature||}
+\label{warp}
+\end{figure}
+\subsection{\lstinline|extract_features_from_image|}
+{Metoda \lstinline|extract_features_from_image| działa na obiekcie klasy \textbf{RCNN} i służy do wyznaczenia odpowiednich regionów z odpowiadającymi im adnotacjami, a następnie wyliczenia dla niech wektorów cech. Funkcja przyjmuje  następujące parametry:}
 \begin{itemize}
-\item przedstawienie idei
-\item architektura systemu
-\item opis struktur danych (i organizacji baz danych)
-\item komponenty, moduły, biblioteki, przegląd ważniejszych klas (jeśli występują)
-\item przegląd ważniejszych algorytmów (jeśli występują)
-\item szczegóły implementacji wybranych fragmentów, zastosowane wzorce projektowe
-\item diagramy UML
+\item {\textbf{img\_dir} – ścieżka do folderu zawierającego zdjęcia.}
+\item {\textbf{classes} – słownik z nazwami klas, dla których dokonana ma być ektrakcja. Każda nazwa klasy jest kluczem, której odpowiada wartość typu \textbf{tkinter.BooleanVar}}
+\item {\textbf{IoU\_cutoff\_object} – wartość współczynnika IoU, powyżej której etykieta ma być zakwalifkowana jako obiekt. Domyślnie przyjmuje wartość 0.5.}
+\item {\textbf{IoU\_cutoff\_not\_object} – wartość współczynnika IoU, poniżej której etykieta ma być zakwalifkowana jako tło. Domyślnie przyjmuje wartość 0.5.}
 \end{itemize}
 
+{Metoda ta odczytuje etykiety z pliku \emph{etykiety.csv} zapisanego w folderze roboczym. Następnie iteruje po kolejnych etykietach każdego obrazu, znajdując odpowiadajacy obraz w folderze \textbf{img\_dir}. W celu przyspieszenia obliczeń każdy obraz jest skalowany do mniejszych rozmiarów przy pomocy funkcji \lstinline|warp|. Następnie obliczane są propozycje regionów, po czym rozpoczyna się iterację po wszystkich obiektach znajdujących się w obrazie. Używając zmiennej \textbf{classes} sprawdza się, czy obiekt powinien być brany pod uwagę przy ektrakcji. Jeżeli nazwie obiektu odpowiada wartość \emph{False}, to pętla jest przerywana i następuje przejscie do kolejnego obiektu. W przeciwnym wypadku obliczenia są kontynuowane. Ponieważ obraz jest przeskalowany, to wymiary prostokątów zawierajacych obiekty, które zostały odczytane w pliku csv są niewłaściwe i należy je również przeskalować. Po przeskalowaniu trzymujemy zmienne \emph{true\_xmin}, \emph{true\_ymin}, \emph{true\_xmax}, \emph{true\_ymax}, które opisują cztery wierzchołki prostokąta w zmienionym już rozmiarze. Następnie iterujemy po wszystkich propozycjach regionów, obliczając wartość współczynnika IoU za pomocą funkcji \lstinline|get_IOU|, poczym  porównujemy ten współczynnik do zmiennych \textbf{IoU\_cutoff\_object} oraz \textbf{IoU\_cutoff\_not\_object}. Na podstawie tych porównań umieszczamy wierzchołki regionu wraz z nazwą klasy, obliczonym współczynnikiem IoU oraz nazwą akurat przetwarzanego obrazu do listy \textbf{info\_pos} dla próbek pozytywnych, lub \textbf{info\_neg} dla negatywnych. Dodatkowo na podstawie regionu wyznaczany jest fragment obrazu, który zapisywany jest odpowiednio w \textbf{image\_pos} badź \textbf{image\_neg}. Po zakończeniu wszystkich iteracji łączone są listy \textbf{image\_pos} z \textbf{image\_neg} oraz \textbf{info\_pos} z \textbf{info\_neg}. Następnie połączone listy z regionami są przekazywane do funkcji \lstinline|warp_and_create_cnn_feature|, która wylicza dla nich cechy. Funkcja zwraca krotkę zawierajacą stworzone etykiety oraz odpowiadające im cechy.
 
-
-Krótka wstawka kodu w linii tekstu jest możliwa, np. \lstinline|descriptor|, a nawet \lstinline|descriptor_gaussian|. 
-Dłuższe fragmenty lepiej jest umieszczać jako rysunek, np. kod na rysunku \ref{fig:pseudokod}, a naprawdę długie fragmenty – w załączniku.
 
 
 
 \chapter{Weryfikacja i walidacja}
+{Podczas tworzenia projektu każdy moduł i funkcjonalości był systematycznie testowane pod względem poprawności funkcjonowania}
+\section{Moduły DataPrep oraz SelectiveSearch}
+{obydwa te moduły zostały stworzone na początku pracy nad narzędziem i były one testowane jeszcze przed przejściem do następnych etapów pracy.
+}
+\begin{figure}[h!]
+\caption{Wizualizacja}
+
+\centering
+\includegraphics[scale=0.3]{example.png}
+\label{wiz}
+\end{figure}
+
 \begin{itemize}
 \item sposób testowania w ramach pracy (np. odniesienie do modelu V)
 \item organizacja eksperymentów
@@ -1042,81 +1075,53 @@ Dłuższe fragmenty lepiej jest umieszczać jako rysunek, np. kod na rysunku \re
 Jeżeli w pracy konieczne jest umieszczenie długich fragmentów kodu źródłowego, należy je przenieść do załącznika.
 
 \begin{lstlisting}
-partition fcm_possibilistic::doPartition
-                             (const dataset & ds)
-{
-   try
-   {
-      if (_nClusters < 1)
-         throw std::string ("unknown number of clusters");
-      if (_nIterations < 1 and _epsilon < 0)
-         throw std::string ("You should set a maximal number of iteration or minimal difference -- epsilon.");
-      if (_nIterations > 0 and _epsilon > 0)
-         throw std::string ("Both number of iterations and minimal epsilon set -- you should set either number of iterations or minimal epsilon.");
-   
-      auto mX = ds.getMatrix();
-      std::size_t nAttr = ds.getNumberOfAttributes();
-      std::size_t nX    = ds.getNumberOfData();
-      std::vector<std::vector<double>> mV;
-      mU = std::vector<std::vector<double>> (_nClusters);
-      for (auto & u : mU)
-         u = std::vector<double> (nX);
-      randomise(mU);
-      normaliseByColumns(mU);
-      calculateEtas(_nClusters, nX, ds);
-      if (_nIterations > 0)
-      {
-         for (int iter = 0; iter < _nIterations; iter++)
-         {
-            mV = calculateClusterCentres(mU, mX);
-            mU = modifyPartitionMatrix (mV, mX);
-         }
-      }
-      else if (_epsilon > 0)
-      {
-         double frob;
-         do 
-         {
-            mV = calculateClusterCentres(mU, mX);
-            auto mUnew = modifyPartitionMatrix (mV, mX);
-            
-            frob = Frobenius_norm_of_difference (mU, mUnew);
-            mU = mUnew;
-         } while (frob > _epsilon);
-      }
-      mV = calculateClusterCentres(mU, mX);
-      std::vector<std::vector<double>> mS = calculateClusterFuzzification(mU, mV, mX);
-      
-      partition part;
-      for (int c = 0; c < _nClusters; c++)
-      {
-         cluster cl; 
-         for (std::size_t a = 0; a < nAttr; a++)
-         {
-            descriptor_gaussian d (mV[c][a], mS[c][a]);
-            cl.addDescriptor(d);
-         }
-         part.addCluster(cl);
-      }
-      return part;
-   }
-   catch (my_exception & ex)                                  
-   {                                                       
-      throw my_exception (__FILE__, __FUNCTION__, __LINE__, ex.what()); 
-   }                                                          
-   catch (std::exception & ex)                                 
-   {                                                            
-      throw my_exceptionn (__FILE__, __FUNCTION__, __LINE__, ex.what()); 
-   }                                                            
-   catch (std::string & ex)                                     
-   {                                                            
-      throw my_exception (__FILE__, __FUNCTION__, __LINE__, ex);        
-   }                                                             
-   catch (...)                                                   
-   {                                                             
-      throw my_exception (__FILE__, __FUNCTION__, __LINE__, "unknown expection");       
-   }  
-}
+ def extract_features_from_image(self,img_dir,classes,IoU_cutoff_object = 0.5,IoU_cutoff_not_object = 0.5):        
+        anno = pd.read_csv("etykiety.csv")        
+        image_pos,image_neg, info_pos,info_neg  = [],[],[],[]
+        for irow in range(anno.shape[0]):
+            row  = anno.iloc[irow,:]
+            path = os.path.join(img_dir,row["fileID"] + ".jpg")
+            image  = imageio.imread(path)
+            orig_h, orig_w, _ = image.shape          
+            img = self.warp(image,self.warped_size)
+            orig_nh, orig_nw, _ = img.shape
+            regions = ss.get_region_proposal(img,min_size=50)[::-1]
+            for ibb in range(row["nobj"]): 
+                name = row["bbx_{}_name".format(ibb)]
+                if not classes[name].get():
+                    break;       
+                multx, multy  = orig_nw/orig_w, orig_nh/orig_h 
+                true_xmin     = row["bbx_{}_xmin".format(ibb)]*multx
+                true_ymin     = row["bbx_{}_ymin".format(ibb)]*multy
+                true_xmax     = row["bbx_{}_xmax".format(ibb)]*multx
+                true_ymax     = row["bbx_{}_ymax".format(ibb)]*multy       
+                object_found_TF = 0
+                _image1 = None
+                for r in regions:                    
+                    prpl_xmin, prpl_ymin, prpl_width, prpl_height = r["rect"]
+                    IoU = ss.get_IOU(prpl_xmin, prpl_ymin, prpl_xmin + prpl_width, prpl_ymin + prpl_height,
+                                     true_xmin, true_ymin, true_xmax, true_ymax)
+                    img_bb = np.array(img[prpl_ymin:prpl_ymin + prpl_height,
+                                          prpl_xmin:prpl_xmin + prpl_width])            
+                    if IoU > IoU_cutoff_object:
+                        found_object=[name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        info_pos.append(found_object)#.encode('utf-8')
+                        image_pos.append(img_bb)
+                        background = ["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        if background in info_neg: 
+                                back_indx=info_neg.index(background)#if the regions figures as the background sample, delete it
+                                del info_neg[back_indx] #from both annotations
+                                del image_neg[back_indx] #and images list                                                                                    
+                    elif IoU < IoU_cutoff_not_object:
+                        background=["background", prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        if background not in info_neg:
+                            info_neg.append(background)
+                            image_neg.append(img_bb)
+        images = image_pos+image_neg
+        infos= np.array(info_pos+info_neg,dtype=h5py.string_dtype())
+        features = self.warp_and_create_cnn_feature(images)
+        return  (infos,features)
+       
 \end{lstlisting}
  
 

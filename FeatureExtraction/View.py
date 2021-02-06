@@ -24,8 +24,8 @@ class View(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        L1 = tk.Label(parent, text="IoU positive treshhold")
-        L2 = tk.Label(parent, text="IoU negative treshhold")
+        L1 = tk.Label(parent, text="IoU positive treshold")
+        L2 = tk.Label(parent, text="IoU negative treshold")
         L1.grid(row =6,column=1)
         L2.grid(row =6,column=0)
         self.entry1=tk.Entry(parent,text="IoU_1")
@@ -54,10 +54,10 @@ class View(tk.Frame):
         button3=tk.Button(text="apply architecture",command=self.apply_architecture)
         button3.grid(row=2,column=0)
 
-        button4=tk.Button(text="train model",command=self.train_model)
-        button4.grid(row=3,column=1)
+        #button4=tk.Button(text="train model",command=self.train_model)
+        #button4.grid(row=3,column=1)
 
-        button5=tk.Button(text="choose model",command=self.apply_model)
+        button5=tk.Button(text="apply model",command=self.apply_model)
         button5.grid(row=2,column=2)
 
         button6=tk.Button(text="load extrernal model",command=self.load_model)
@@ -137,7 +137,7 @@ class View(tk.Frame):
                 #img = skimage.util.img_as_float(img)
                 #annotation=create_annotations(ann_path)
                             #architecture.prepare_data(ann_path)
-                        annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes,0.6,0.4)
+                        annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes)
                         if self.save_type.get() == "text":
                             data = np.concatenate((annotations,activations),axis=1)
                             np.savetxt("test4.txt",data,fmt="%s")
