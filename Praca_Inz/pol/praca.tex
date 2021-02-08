@@ -21,6 +21,7 @@
 \usepackage{mathtools}
 \usepackage{geometry}
 \usepackage[export]{adjustbox}
+\usepackage{multirow}
 
 
 %\usepackage[nolists,nomarkers]{endfloat}  // wersja pracy z rysunkami i tabelami na końcu
@@ -735,7 +736,7 @@ Gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 \subsection{Instalacja narzędzia}
 {Kod narzędzia należy pobrać z publicznego repozytorium \url{https://github.com/Mikohab450/FeatureExtraction.git}. Można to zrobić na wiele sposobów, pobierajac kod bezpośrednio ze strony w formacie .zip, lub klonując repozytorium za pomocą narzędzia git w terminalu  systemowym używając komendy: }
 
-{\lstinline|$ git clone https://\emph{github.com/Mikohab450/FeatureExtraction.git}| }
+{\lstinline|$ git clone https://github.com/Mikohab450/FeatureExtraction.git| }
 
 \section{Sposób aktywacji}
 {Następnie należy zainstalować wszystkie biblioteki potrzebne do działanie programu. Można to zrobić za pomocą wbudowanego w Pythona systemu zarzadzania bibliotekami pip. W systemie Windows należy wspisać komendę:}
@@ -976,25 +977,87 @@ def get_region_proposal(img_8bit,min_size = 500):
 
 \chapter{Weryfikacja i walidacja}
 {Podczas tworzenia projektu każdy moduł i funkcjonalości był systematycznie testowane pod względem poprawności funkcjonowania}
-\section{Moduły DataPrep oraz SelectiveSearch}
-{obydwa te moduły zostały stworzone na początku pracy nad narzędziem i były one testowane jeszcze przed przejściem do następnych etapów pracy.
+\subsubsection{Moduły DataPrep oraz SelectiveSearch}
+{Obydwa te moduły zostały stworzone na początku pracy nad narzędziem i były one testowane jeszcze przed przejściem do następnych etapów pracy. W celu weryfikacji poprawności ich działania, wizualizowano rezultaty działań, dzieki czemu można było zobaczyć, czy otrzymane wyniki pokrywają się z oczekiwaniami. Na rysunku \ref{wiz} pokazano działanie algorytmu segmentacji metodą Felzenszwalba, a na rysunku \ref{regions} wyświetlono regiony wyznaczone przez algorytm wyszukiwania selektywnego. Jednym z problemów napotkanym w tym obszarze pracy było wyznaczania kilku regionów o identycznych wymiarach. Nie był to co prawda błąd uniemożliwiający działanie narzędzie, lecz raczej niechciane zachowanie, które zlikwidowano poprzez dodanie funkcji usuwającej duplikaty z listy regionów.
 }
 \begin{figure}[h!]
-\caption{Wizualizacja}
+\caption{Wizualizacja segmentacji metodą Felzenszwalba.}
 
 \centering
 \includegraphics[scale=0.3]{example.png}
 \label{wiz}
 \end{figure}
 
-\begin{itemize}
-\item sposób testowania w ramach pracy (np. odniesienie do modelu V)
-\item organizacja eksperymentów
-\item przypadki testowe zakres testowania (pełny/niepełny)
-\item wykryte i usunięte błędy
-\item opcjonalnie wyniki badań eksperymentalnych
-\end{itemize}
- 
+
+
+\begin{figure}[h!]
+\caption{Wizualizacja wyznaczonych regionów.}
+
+\centering
+\includegraphics[scale=0.2]{example2.png}
+\label{regions}
+\end{figure}
+
+\subsubsection{Moduł View}
+{W celu przetestowania funkcjonalności dodawania zewnętrznych architektur stworzono testową klasę \textbf{exampleModel}. Następnie sprawdzono, czy po wybraniu pliku z tą klasą moduł jest ładowany poprawnie, cz jest ona wyświetlana na liścia architektur oraz czy po zainicjalizowaniu jej jest tworzona instancja jej klasy. Podczas testowania tego elementu zauważono nieoczekiwane zachowanie systemu – w przypadku wyjścia z okna dialogowego podczas wczytywania pliku system pomimo tego, że żaden plik nie został wybrany, próbował otworzyć plik o pustej nazwie, co powodowało błąd. Dodanie warunku sprawdzajacego, czy jakiś plik został wybrany, rozwiązało problem.}
+
+{Podczas testowania funkcjonalości wyświetlania list napotkano na kolejną słabość systemu. Każde naciśnięcie przycisku wyświetlajacego listę otwierało nowe okno z listą, można więc było otwierać nieograniczoną ilość okien. Dodatkowo w przypadku wielu otwartych okien z listami próba wybrania elementu z jednej z nich kończyła się błędem sytemu. Problem rozwiązano poprzez ograniczenie ilości wyświetlanych okien, tak aby tylko jedno okno z listą mogło być otwarte w danym momencie. 
+}
+
+\section{Wyniki eksperymentalne}
+{W celu oszacowania szybkości działania narzędzia oraz ilości zużywanej pamięci, przeprowadzono szereg testów dla różnych ilości danych wejściowych. Wybrano losowo ze zbioru danych PASCAL VOC określoną liczbę zdjeć, a następnie zmierzono czas wykonywania algorytmu wyszukiwania selektywnego ($t_1$), ektrakcji cech  ($t_2$), zapisu do pliku ($ t_3$) oraz ich sumę  ($ t_c$). Zmierzono również ilość pamięci, która była w użyciu przez proces podczas zakończenia obliczeń. Wyniki przedstawiono w tabeli \ref{wyniki}. }
+{Można zaobserwować, że czas zapisu ($t_3$) w formacie hdf5 jest szybszy od zapisu w formacie tekstowym. Nie jest to zaskoczeniem, ponieważ format hdf5 został stworzony specjalnie do efektywnego operowania na dużych zbiorach danych, i wykonuje takie operacje bardziej optymalnie. Nie udało się niestety przeprowadzić badań nad większą liczbą obrazów, ponieważ ilość dostępnej pamięci była niewystarczająca. Jak można łatwo policzyć, wyznaczając ok. 400 regionów na jeden obraz, każdy region o wymiarach 224x224x3, otrzymujemy dla pięciu obrazów ponad 300 milionów liczb. Doliczyć do tego należy jeszcze sieć neuronową, która również zawiera mnóstwo parametrów (użyty w tym przykładzie VGG16 zajmuje ponad 400MB) i otrzymujemy ogromne zapotrzebowanie na pamięć. Warto zaznaczyć, że wszystkie obliczenia były dokonywane tutaj za pomocą technologii CUDA – możliwośc zrównoleglenia obliczeń na karcie graficznej pozwala skrócić czas wykonywania obliczeń ponad 6-krotnie w porównaniu do wykonywania ich na zwykłym procesorze.}
+\begin{table}[h!]
+\centering
+\caption{Czas wykonania w sekundach oraz zużycie pamięci w zależności od liczby obrazów oraz formatu zapisu. Do badań użyto modelu VGG16.}
+\label{wyniki}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\toprule	
+	$Obrazy $ &Format &       $t_1$ & $t_2$ & $t_3$ & $t_c$& $\bar{t_c}$ & Pamięć(GB) \\
+\midrule  
+
+	       \multirow{4}*{1 }  
+	       					& \multirow{2}*{text} 
+	       					  & 0.73 & 11.66 & 3.18 &  14.84 &  \multirow{2}*{15.86} &  1.235  \\
+	       					  & &  0.98 & 13.24 & 3.64 &  16.88 &  &1.30  \\
+	       					  \cline{2-8}
+	       					  & \multirow{2}*{hdf5} 
+	       					  & 0.87 & 10.74 & 1.01 &  11.75& \multirow{2}*{11.60} & 1.36  \\
+	       					  & &  0.72 & 10.59& 0.86 &  11.45 &  &0.96 \\
+	       					   \cline{1-8}
+		 \multirow{4}*{ 2}  
+		 	& \multirow{2}*{text} 
+	       					  & 0.93 & 17.25 & 4.35 & 21.60 &\multirow{2}*{21.06} & 0.83
+ \\
+	       					  & &  1.01 & 16.02 & 4.50 &  20.52 & & 0.91
+  \\	 \cline{1-8}
+	       					  & \multirow{2}*{hdf5} 
+	       					  & 1.02& 15.12 & 0.91 &  16.33 & \multirow{2}*{16.20} & 0.71
+ \\
+	       					  & &  0.93  & 14.45 & 0.71 &  16.06& & 1.12
+ \\ 	 \cline{1-8}
+	        \multirow{4}*{ 3}     		& \multirow{2}*{text} 
+	       					  & 3.98 & 21.77 & 8.51 &30.28 & \multirow{2}*{35.38} & 0.93  \\
+	       					  	       					  & &  2.86& 31.4 &9.00 &  40.48 &  &1.36 \\
+	       					  	       					   \cline{2-7}
+	       					  & \multirow{2}*{hdf5} 
+	       					  	       					  & 2.80& 50.9 & 3.30 &  54.23 &\multirow{2}*{54.57} &  1.37  \\
+	       					  & &  2.91 & 51.2 & 3.67 &  54.90&  &1.39 \\ 
+	       					   \cline{1-8}
+	\multirow{4}*{ 5}  
+ 		& \multirow{2}*{text} 
+	       					  & 4.31& 50.4 & 12.28 &  62.71& \multirow{2}*{76.40} & 1.56  \\
+	       					  & &  5.15& 59.16 & 30.93&  90.08&  &1.81  \\
+	       					   \cline{2-8}
+	       					  & \multirow{2}*{hdf5} 
+	       					  	       					  & 4.65 & 66.98 & 5.86&  72.84 &\multirow{2}*{77.27} &  1.73  \\
+							 & &  4.82 & 75.88 & 5.83 & 81.70 &  &1.64  \\
+
+
+\bottomrule
+\end{tabular}
+\end{table}  
+
 
 
 \chapter{Podsumowanie i wnioski}
@@ -1008,7 +1071,7 @@ def get_region_proposal(img_8bit,min_size = 500):
 \begin{table}
 \centering
 \caption{Opis tabeli nad nią.}
-\label{id:tab:wyniki}
+\label{id:tab:wynki}
 \begin{tabular}{rrrrrrrr}
 \toprule
 	         &                                     \multicolumn{7}{c}{metoda}                                      \\
@@ -1061,12 +1124,6 @@ def get_region_proposal(img_8bit,min_size = 500):
 \item[ILSVRC] TODO
 \item[API] Interfejs Programowania Aplikacji(ang. \ang{Application Programming Interface})
 \item[GUI] Graficzny Interfejs Użytkownika (ang. \ang{Graphical User Interface})
-\item[DNA] kwas deoksyrybonukleinowy (ang. \ang{deoxyribonucleic acid})
-\item[MVC] model -- widok -- kontroler (ang. \ang{model--view--controller}) 
-\item[$N$] liczebność zbioru danych
-\item[$\mu$] stopnień przyleżności do zbioru
-\item[$\mathbb{E}$] zbiór krawędzi grafu
-\item[$\mathcal{L}$] transformata Laplace'a 
 \end{description}
 
 
