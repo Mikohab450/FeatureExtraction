@@ -16,12 +16,14 @@ import h5py
 from DataPrep import create_annotations
 import sys
 import os, psutil #only for checking memory consumption, delete later!
+import time #only for checking time, delete later!
 
-
+import tensorflow as tf
 class View(tk.Frame):
 
 
     def __init__(self, parent, *args, **kwargs):
+        print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         L1 = tk.Label(parent, text="IoU positive treshold")
@@ -89,12 +91,14 @@ class View(tk.Frame):
    
     architecture_idx=0
     model_idx=0
-    ann_path='C:\\Users\\Mikolaj\\Documents\\FeatureExtraction\\FeatureExtraction\\Test_data\\Annotations'
-    img_path='C:\\Users\\Mikolaj\\Documents\\FeatureExtraction\\FeatureExtraction\\Test_data\\JPEGImages'
+    ann_path='C:\\Users\\Mikolaj\\Documents\\PASCAL_VOC\\VOC2012\\Annotations'
+    img_path='C:\\Users\\Mikolaj\\Documents\\PASCAL_VOC\\VOC2012\\JPEGImages'
     data_dir=''
     architecture = None
     classes=[]
-
+    classWindow= None
+    modelWindow= None
+    architectureWindow=None
     def load_annotations(self,event=None):
         try:
             self.ann_path= askdirectory()
@@ -137,10 +141,11 @@ class View(tk.Frame):
                 #img = skimage.util.img_as_float(img)
                 #annotation=create_annotations(ann_path)
                             #architecture.prepare_data(ann_path)
-                        annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes)
+                        start=time.time()
+                        annotations, activations =self.architecture.extract_features_from_image(self.img_path,self.classes,float(self.entry1.get()),float(self.entry2.get()))
                         if self.save_type.get() == "text":
                             data = np.concatenate((annotations,activations),axis=1)
-                            np.savetxt("test4.txt",data,fmt="%s")
+                            np.savetxt("Features.txt",data,fmt="%s")
                         if self.save_type.get() =="hdf5":
      
                             h5f_ann = h5py.File('annotations.h5', 'w')
@@ -148,10 +153,16 @@ class View(tk.Frame):
                             # data_ = np.concatenate((annotations,activations),axis=1)
                             h5f_ann.create_dataset('annotations', data=annotations)#,dtype=h5py.string_dtype(encoding='utf-8'))
                             h5f_act.create_dataset('activations', data=activations)
+                            h5f_act.close()
+                            h5f_ann.close()
                         
-                        messagebox.showinfo("Info","Features saved!")
+                       
+                        end=time.time()
+                        print("TIME TOOK : {} s".format((end-start)))
                         process = psutil.Process(os.getpid())
-                        print(process.memory_info().rss)  # print memory usage in bytes 
+                        print("Memory took : {} bytes".format((process.memory_info().rss)))
+                        #print(p)  # print memory usage in bytes 
+                        #messagebox.showinfo("Info","Features saved!")
 
                     except AssertionError as e:
                         messagebox.showerror("Error", "Model must be chosen")
@@ -201,18 +212,13 @@ class View(tk.Frame):
 
 
     def list_architectures(self,event=None):
-        newWindow= None
-        if newWindow == None:
-            newWindow = Toplevel(self.parent) 
+        if self.architectureWindow == None:
+            self.architectureWindow = Toplevel(self.parent) 
+            self.architectureWindow.protocol('WM_DELETE_WINDOW', self.on_tl_close_a)
+            self.architectureWindow.title("List") 
+            self.architectureWindow.geometry("200x200") 
   
-        # sets the title of the 
-        # Toplevel widget 
-            newWindow.title("List") 
-  
-        # sets the geometry of toplevel 
-            newWindow.geometry("200x200") 
-  
-            list = tk.Listbox(newWindow)
+            list = tk.Listbox(self.architectureWindow)
    
             i=0
             for module in self.list_of_modules:
@@ -221,21 +227,23 @@ class View(tk.Frame):
 
             list.pack()
             list.bind('<<ListboxSelect>>', self.onselect)
+        else:
+            self.architectureWindow.lift()
 
     def list_models(self,event=None):
         self.check_architecture()
-        newWindow= None
-        if newWindow == None:
-            newWindow = Toplevel(self.parent) 
-  
+     
+        if self.modelWindow == None:
+            self.modelWindow = Toplevel(self.parent) 
+            self.modelWindow.protocol('WM_DELETE_WINDOW', self.on_tl_close_m)
         # sets the title of the 
         # Toplevel widget 
-            newWindow.title("List") 
+            self.modelWindow.title("List") 
   
         # sets the geometry of toplevel 
-            newWindow.geometry("200x200") 
+            self.modelWindow.geometry("200x200") 
   
-            list = tk.Listbox(newWindow)
+            list = tk.Listbox(self.modelWindow)
             for i,model in enumerate(self.architecture.list_of_models):
                 if type(model) is tuple:
                       list.insert(i,model[0])
@@ -245,11 +253,11 @@ class View(tk.Frame):
 
             list.pack()
             list.bind('<<ListboxSelect>>', self.onselect_model)
+        else:
+            self.modelWindow.lift()
 
     def apply_architecture(self,event=None):
-        print(self.entry1.get())
-        print(self.entry2.get())
-        self.classes={i: tk.BooleanVar(value=True) for i in create_annotations(self.ann_path) } #delete later!!!
+       # self.classes={i: tk.BooleanVar(value=True) for i in create_annotations(self.ann_path) } #delete later!!!
         try:
             self.architecture = getattr(self.list_of_modules[self.architecture_idx],self.list_of_modules[self.architecture_idx].__name__ )()
             messagebox.showinfo("Architecture","Architecture " + self.list_of_modules[self.architecture_idx].__name__ +" is being used")
@@ -265,32 +273,48 @@ class View(tk.Frame):
         self.architecture.load_model(path)
 
     def choose_classes(self,event=None):
-        newWindow= None
-        if newWindow == None:
-            newWindow = Toplevel(self.parent) 
-  
+        
+        if self.classWindow == None:
+            self.classWindow = Toplevel(self.parent) 
+            self.classWindow.protocol('WM_DELETE_WINDOW', self.on_tl_close_c)
         # sets the title of the 
         # Toplevel widget 
-            newWindow.title("Classes") 
+            self.classWindow.title("Classes") 
   
         # sets the geometry of toplevel 
-            newWindow.geometry("200x200") 
+            self.classWindow.geometry("200x200") 
   
-            list = tk.Listbox(newWindow)
+            list = tk.Listbox(self.classWindow)
 
             i=0
             for class_ in self.classes:
                 #self.classes[class_]=tk.BooleanVar(value=True)
-                l=tk.Checkbutton(newWindow, text=class_, variable=self.classes[class_])
+                l=tk.Checkbutton(self.classWindow, text=class_, variable=self.classes[class_])
                 l.pack()
-       
+
+        else:
+            self.classWindow.lift()
+
+    def on_tl_close_c(self):
+        self.classWindow.destroy()
+        self.classWindow=None
+
+    def on_tl_close_a(self):
+        self.architectureWindow.destroy()
+        self.architectureWindow=None
+
+    def on_tl_close_m(self):
+        self.modelWindow.destroy()
+        self.modelWindow=None
+
+
     def apply_model(self,event=None):
         self.check_architecture()
         try:
             self.architecture.choose_model(self.model_idx)
-            messagebox.showinfo("Model","Currently used model: "+ self.architecture.CNN_model.name)
-        except:
-             messagebox.showerror("Error", "Unexpected error occured during model initialization")
+            messagebox.showinfo("Model","Currently used model: "+ self.architecture.list_of_models[self.model_idx])
+        except Exception as e:
+             messagebox.showerror("Error", str(e))#"Unexpected error occured during model initialization")
     
    
 

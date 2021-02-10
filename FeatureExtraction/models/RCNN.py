@@ -14,15 +14,13 @@ import time
 #print(os.environ['PYTHONPATH'])
 #print (os.environ['CONDA_DEFAULT_ENV'])
 import sys
-from keras.applications import VGG16
-from keras.applications import VGG19
-from keras.applications import ResNet50
-from keras.applications import MobileNet
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.applications import VGG19
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.applications import MobileNet
 import importlib
-from keras.layers import Activation
-from keras.models import Sequential
-from keras.layers import Dense
-from keras import models
+from tensorflow.keras.layers import Activation,Dense
+from tensorflow.keras import models
 from NetworkArchitecture import NetworkArchitecture
 from sklearn.utils import shuffle
 import selectiveSearch as ss
@@ -101,9 +99,9 @@ class RCNN(NetworkArchitecture):
         IoU_cutoff_not_object the threshold below which a background is recognized (range 0-1)
         '''
         #imgage  = imageio.imread(path)
-        
-        anno = pd.read_csv("etykiety.csv")        
-        image_pos,image_neg, info_pos,info_neg  = [],[],[],[]
+        start=time.time()
+        anno = pd.read_csv("etykiety.csv")             
+        image_pos,image_neg, info_pos,info_neg,IoU_list_pos,IoU_list_neg  = [],[],[],[],[],[]
         for irow in range(anno.shape[0]):
             row  = anno.iloc[irow,:]
             path = os.path.join(img_dir,row["fileID"] + ".jpg")
@@ -113,8 +111,10 @@ class RCNN(NetworkArchitecture):
             #img  = image # warp(img, )
             orig_nh, orig_nw, _ = img.shape
             regions = ss.get_region_proposal(img,min_size=50)[::-1]
+            print("Propozycje regionów : {}:".format(len(regions)))
             for ibb in range(row["nobj"]): 
                 name = row["bbx_{}_name".format(ibb)]
+                
                 if not classes[name].get():
                     break;       
                 ## extract the bounding box of the object  
@@ -124,8 +124,6 @@ class RCNN(NetworkArchitecture):
                 true_ymin     = row["bbx_{}_ymin".format(ibb)]*multy
                 true_xmax     = row["bbx_{}_xmax".format(ibb)]*multx
                 true_ymax     = row["bbx_{}_ymax".format(ibb)]*multy       
-                object_found_TF = 0
-                _image1 = None
                 for r in regions:                    
                     prpl_xmin, prpl_ymin, prpl_width, prpl_height = r["rect"]
                     ## calculate IoU between the candidate region and the object
@@ -134,28 +132,63 @@ class RCNN(NetworkArchitecture):
                     ## candidate region numpy array
                     img_bb = np.array(img[prpl_ymin:prpl_ymin + prpl_height,
                                           prpl_xmin:prpl_xmin + prpl_width])            
+                    background=["background",prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
                     if IoU > IoU_cutoff_object:
-                        found_object=[name,IoU, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        found_object=[name, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
+                        IoU_list_pos.append([IoU])
                        # if found_object not in info_pos:
                         info_pos.append(found_object)#.encode('utf-8')
                         image_pos.append(img_bb)
-                        background = ["background",IoU, prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
-                        if background in info_neg: 
-                                back_indx=info_neg.index(background)#if the regions figures as the background sample, delete it
-                                del info_neg[back_indx] #from both annotations
-                                del image_neg[back_indx] #and images list
+        
                             #break                                                                                      
-                    elif IoU < IoU_cutoff_not_object:
-                        background=["background", IoU,prpl_xmin, prpl_ymin, prpl_width, prpl_height,row["fileID"]]
-                        if background not in info_neg:
-                            info_neg.append(background)
-                            image_neg.append(img_bb)
+                    elif background in info_neg:
+                        back_indx=info_neg.index(background)
+                        IoU_list_neg[back_indx].append(IoU)
+                    else:
+                        info_neg.append(background)
+                        image_neg.append(img_bb)
+                        IoU_list_neg.append([IoU])
+
+
+
+
+                   #IoU < IoU_cutoff_not_object:
+                   #     if background in info_neg:
+                   #         back_indx=info_neg.index(background)
+                   #         IoU_list_neg[back_indx].append(IoU)
+                   #     else:
+                           
+                   # else:                       #value between iou_neg and iou_pos
+                   #     if background in info_neg:          #sample with this iou value shouldnt be classfied as background
+                   #         back_indx=info_neg.index(background)        
+                   #         del info_neg[back_indx]                 #so we delete it if it is
+                   #         del image_neg[back_indx] 
+                   #         del IoU_list_neg[back_indx]
+
+
+                #print("Próbki negatywne:")
+                a=len(info_neg)
+                print (a)
+        for back_indx,neg_iou in enumerate(IoU_list_neg):
+            if max(neg_iou)> IoU_cutoff_not_object:    
+                    del info_neg[back_indx]                 #so we delete it if it is
+                    del image_neg[back_indx] 
+                    del IoU_list_neg[back_indx]
+                    print("Deleting background sample with iou:{}".format(max(neg_iou)))
+
+        IoU_total=np.expand_dims(np.array(IoU_list_pos+IoU_list_neg,dtype=h5py.string_dtype()),axis=1)
+        #np.concatenate((annotations,activations),axis=1)
         images = image_pos+image_neg
         infos= np.array(info_pos+info_neg,dtype=h5py.string_dtype())
+        full_infos = np.concatenate((infos,IoU_total),axis=1,dtype=h5py.string_dtype())
+        end=time.time()
+        print("TIME TOOK_1 : {} s".format((end-start)))
+        start=time.time()
         features = self.warp_and_create_cnn_feature(images)
-
+        end=time.time()
+        print("TIME TOOK_2 : {} s".format((end-start)))
         #np.concatenate((infos,features),axis=1)
-        return  (infos,features)
+        return  (full_infos,features)
         
 
     def wrap_regions(self,img,regions):
