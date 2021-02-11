@@ -840,7 +840,7 @@ Na rysunku \ref{example} przedstawiono przykładowe zdjęcie w folderze wejścio
 \centering
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
 \hline
-Nazwa klasy & IoU & xmin & ymin & xmax & ymax & ID pliku & wektor \\
+Nazwa klasy & xmin & ymin & xmax & ymax & ID pliku & [IoU]& wektor \\
 \hline
 
 \end{tabular}
@@ -855,12 +855,12 @@ Nazwa klasy & IoU & xmin & ymin & xmax & ymax & ID pliku & wektor \\
 \centering
 \caption{Fragment przykładowych wyektrahowanych danych}
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
-horse & 0.76 & 0 & 0 & 223 & 223 & 2007\_000799 & 0.614785432 2.24941 [...]\\
-horse & 0.77 &0 & 0 & 223 & 218 & 2007\_000799 &  0.634443283 2.2379 [...]\\
-horse &  0.66 &43 & 55 & 223 & 168 & 2007\_000799 & 0.713880411 2.0658 [...]\\
-person & 0.73 & 43 & 101 & 180 & 122 & 2007\_000799 & 0.74330669 2.33210 [...] \\
-background & 0.02 & 97 & 157 & 14 & 38 & 2007\_000799 & 1.035556 1.999945 [...]\\
-background & 0.12 &99 & 152 & 12 & 30 & 2007\_000799 & 0.7487751 2.020392[...]\\
+horse  & 0 & 0 & 223 & 223 & 2007\_000799 & [0.76] & 0.614785432 2.24941 [...]\\
+horse  &0 & 0 & 223 & 218 & 2007\_000799 & [ 0.77]  &0.634443283 2.2379 [...]\\
+horse &  43 & 55 & 223 & 168 & 2007\_000799 &[0.66] & 0.713880411 2.0658 [...]\\
+person &  43 & 101 & 180 & 122 & 2007\_000799 & [0.73] & 0.74330669 2.33210 [...] \\
+background & 97 & 157 & 14 & 38 & 2007\_000799 & [0.02, 0.03 ]& 1.035556 1.999945 [...]\\
+background & 99 & 152 & 12 & 30 & 2007\_000799 &[0.12, 0] & 0.7487751 2.020392[...]\\
 \end{tabular}
 \label{cechy}
 \end{table}
@@ -946,7 +946,7 @@ def get_region_proposal(img_8bit,min_size = 500):
 \label{search}
 \end{figure}
 
-\subsection{ \lstinline|warp_and_create_cnn_feature|}
+\subsection{\lstinline|warp_and_create_cnn_feature|}
 {Metoda te zdefiniowana jest w klasie \textbf{RCNN} i oblicza cechy głębokie dla otrzymanej listy obrazów \textbf{image}. Dla każdego obrazu z listy najpierw zmienia jego rozmiar za pomocą metody \lstinline|warp| tak, aby jego wymiary były kompatybilne z wejściem sieci konwolucyjnem. Obraz jest przepuszczany przez sieć poprzez użycie wbudowanej metody \textbf{predict}, która operuje na modelu sieci neuronowej, który jest obiekem klasy \textbf{Model} z biblioteki \emph{Keras}. }
 \begin{figure}[h!]
 \centering
@@ -976,7 +976,7 @@ def get_region_proposal(img_8bit,min_size = 500):
 
 
 \chapter{Weryfikacja i walidacja}
-{Podczas tworzenia projektu każdy moduł i funkcjonalości był systematycznie testowane pod względem poprawności funkcjonowania}
+{Podczas tworzenia projektu każdy moduł i funkcjonalości był systematycznie testowane pod względem poprawności funkcjonowania.}
 \subsubsection{Moduły DataPrep oraz SelectiveSearch}
 {Obydwa te moduły zostały stworzone na początku pracy nad narzędziem i były one testowane jeszcze przed przejściem do następnych etapów pracy. W celu weryfikacji poprawności ich działania, wizualizowano rezultaty działań, dzieki czemu można było zobaczyć, czy otrzymane wyniki pokrywają się z oczekiwaniami. Na rysunku \ref{wiz} pokazano działanie algorytmu segmentacji metodą Felzenszwalba, a na rysunku \ref{regions} wyświetlono regiony wyznaczone przez algorytm wyszukiwania selektywnego. Jednym z problemów napotkanym w tym obszarze pracy było wyznaczania kilku regionów o identycznych wymiarach. Nie był to co prawda błąd uniemożliwiający działanie narzędzie, lecz raczej niechciane zachowanie, które zlikwidowano poprzez dodanie funkcji usuwającej duplikaty z listy regionów.
 }
@@ -1001,8 +1001,9 @@ def get_region_proposal(img_8bit,min_size = 500):
 \subsubsection{Moduł View}
 {W celu przetestowania funkcjonalności dodawania zewnętrznych architektur stworzono testową klasę \textbf{exampleModel}. Następnie sprawdzono, czy po wybraniu pliku z tą klasą moduł jest ładowany poprawnie, cz jest ona wyświetlana na liścia architektur oraz czy po zainicjalizowaniu jej jest tworzona instancja jej klasy. Podczas testowania tego elementu zauważono nieoczekiwane zachowanie systemu – w przypadku wyjścia z okna dialogowego podczas wczytywania pliku system pomimo tego, że żaden plik nie został wybrany, próbował otworzyć plik o pustej nazwie, co powodowało błąd. Dodanie warunku sprawdzajacego, czy jakiś plik został wybrany, rozwiązało problem.}
 
-{Podczas testowania funkcjonalości wyświetlania list napotkano na kolejną słabość systemu. Każde naciśnięcie przycisku wyświetlajacego listę otwierało nowe okno z listą, można więc było otwierać nieograniczoną ilość okien. Dodatkowo w przypadku wielu otwartych okien z listami próba wybrania elementu z jednej z nich kończyła się błędem sytemu. Problem rozwiązano poprzez ograniczenie ilości wyświetlanych okien, tak aby tylko jedno okno z listą mogło być otwarte w danym momencie. 
-}
+{Podczas testowania funkcjonalości wyświetlania list napotkano na kolejną słabość systemu. Każde naciśnięcie przycisku wyświetlajacego listę otwierało nowe okno z listą, można więc było otwierać nieograniczoną ilość okien. Dodatkowo w przypadku wielu otwartych okien z listami próba wybrania elementu z jednej z nich kończyła się błędem sytemu. Problem rozwiązano poprzez ograniczenie ilości wyświetlanych okien, tak aby tylko jedno okno z listą mogło być otwarte w danym momencie. }
+
+{Kolejnym problem napotkano podczas zapisu danych w formacie hdf5. Okazało się, ze format ten używa kodowania UTF-8 dla zmiennych typu \emph{String}, podczas gdy Python używa UTF-32. Ta niekompatybilność okazała się być bardzo frustrująca, jednak udało się ją rozwiązać poprzez ustalenie użycia specjalnego typu z biblioteki hdf5 oraz podział etykiet i aktywacji na osobne pliki.}
 
 \section{Wyniki eksperymentalne}
 {W celu oszacowania szybkości działania narzędzia oraz ilości zużywanej pamięci, przeprowadzono szereg testów dla różnych ilości danych wejściowych. Wybrano losowo ze zbioru danych PASCAL VOC określoną liczbę zdjeć, a następnie zmierzono czas wykonywania algorytmu wyszukiwania selektywnego ($t_1$), ektrakcji cech  ($t_2$), zapisu do pliku ($ t_3$) oraz ich sumę  ($ t_c$). Zmierzono również ilość pamięci, która była w użyciu przez proces podczas zakończenia obliczeń. Wyniki przedstawiono w tabeli \ref{wyniki}. }
@@ -1035,7 +1036,7 @@ def get_region_proposal(img_8bit,min_size = 500):
 	       					  & 1.02& 15.12 & 0.91 &  16.33 & \multirow{2}*{16.20} & 0.71
  \\
 	       					  & &  0.93  & 14.45 & 0.71 &  16.06& & 1.12
- \\ 	 \cline{1-8}
+ \\ 	
 	        \multirow{4}*{ 3}     		& \multirow{2}*{text} 
 	       					  & 3.98 & 21.77 & 8.51 &30.28 & \multirow{2}*{35.38} & 0.93  \\
 	       					  	       					  & &  2.86& 31.4 &9.00 &  40.48 &  &1.36 \\
@@ -1061,39 +1062,18 @@ def get_region_proposal(img_8bit,min_size = 500):
 
 
 \chapter{Podsumowanie i wnioski}
-\begin{itemize}
-\item uzyskane wyniki w świetle postawionych celów i zdefiniowanych wyżej wymagań
-\item kierunki ewentualnych danych prac (rozbudowa funkcjonalna …)
-\item problemy napotkane w trakcie pracy
-\end{itemize}
+{W ramach pracy udało się stworzyć narzedzie do ektrakcji cech głębokich za pomocą konwolucyjnych sieci neuronowych, wraz z zaimplementowaną architekturą RCNN. Zrealizowano wszystkie wymagania funkcjonalne oraz niefunkcjonalne, które zostały postawione na początku pracy. W toku pracy wprowadzono również nowe funkcjonalności, których nie były uwzglednione przy etapie planowania. Dodanie takich funkcjonalności było zazwyczaj podyktowane podniesieniem komfortu korzystania z narzędzia oraz zapewnieniem użytkownikowi większej kontroli nad działaniem algorytmu.}
+
+{Jednym z ważnych aspektów, który miano na uwagę podczas tworzenia projektu była jego uniwersalność i możliwość dostosowania pod własne preferencje. Narzędzie działa dla dowolnych danych, oferuje możliwość wybrania jednego z kilku znanych modeli sieci, jak i wybór własnej sieci użytkownika. Dodatkowo dzięki mechanizmowi wczytywania architektur z pliku możliwa będzie jego dalsza rozbudowa.}
+
+{Początkowy etap tworzenia aplikacji okazał się być najbardziej wymagający. Zdobycie odpowiedniej wiedzy teoretycznej z tak obszernego działu nie było łatwe, a po uzyskaniu jej problemem był brak doświadczenia w praktycznym wykorzystaniu tej wiedzy. Mimo, że wybrany język programowania i technologie nie były zupełnie obce, to niektóre bardziej złożone mechanizmy oraz zachowania wymagały lepszego zapoznania się. W takich przypadkach pomocna okazała się oficjalna dokumentacja zarówno Pythona, jak i poszczególnych bilbiotek.}
+
+{Tworzenie aplikacji nie obyło się bez pewnych komplikacji. Aby poprawnie przetestować jakieś rozwiązanie, często było czekać kilku minut, aż program wykona obliczenia i przejdzie do newralgicznej części kodu. Aby to zminimanizować, podczas pracy działano na bardzo małych próbkach danych, dzięki czemu czas oczekiwania się skracał.}
+
+{Stworzone narzędzie było ciekawym, angażującym oraz wymagajacym projektem. W celu jego realizacji poznano najnowsze odkrycia w dziedzinie wizji komputerowej oraz użyto popularnych technologii, które zyskują coraz to większe wpływy na rozwój techniki.}
 
 
-\begin{table}
-\centering
-\caption{Opis tabeli nad nią.}
-\label{id:tab:wynki}
-\begin{tabular}{rrrrrrrr}
-\toprule
-	         &                                     \multicolumn{7}{c}{metoda}                                      \\
-	         \cmidrule{2-8}
-	         &         &         &        \multicolumn{3}{c}{alg. 3}        & \multicolumn{2}{c}{alg. 4, $\gamma = 2$} \\
-	         \cmidrule(r){4-6}\cmidrule(r){7-8}
-	$\zeta$ &     alg. 1 &   alg. 2 & $\alpha= 1.5$ & $\alpha= 2$ & $\alpha= 3$ &   $\beta = 0.1$  &   $\beta = -0.1$ \\
-\midrule
-	       0 &  8.3250 & 1.45305 &       7.5791 &    14.8517 &    20.0028 & 1.16396 &                       1.1365 \\
-	       5 &  0.6111 & 2.27126 &       6.9952 &    13.8560 &    18.6064 & 1.18659 &                       1.1630 \\
-	      10 & 11.6126 & 2.69218 &       6.2520 &    12.5202 &    16.8278 & 1.23180 &                       1.2045 \\
-	      15 &  0.5665 & 2.95046 &       5.7753 &    11.4588 &    15.4837 & 1.25131 &                       1.2614 \\
-	      20 & 15.8728 & 3.07225 &       5.3071 &    10.3935 &    13.8738 & 1.25307 &                       1.2217 \\
-	      25 &  0.9791 & 3.19034 &       5.4575 &     9.9533 &    13.0721 & 1.27104 &                       1.2640 \\
-	      30 &  2.0228 & 3.27474 &       5.7461 &     9.7164 &    12.2637 & 1.33404 &                       1.3209 \\
-	      35 & 13.4210 & 3.36086 &       6.6735 &    10.0442 &    12.0270 & 1.35385 &                       1.3059 \\
-	      40 & 13.2226 & 3.36420 &       7.7248 &    10.4495 &    12.0379 & 1.34919 &                       1.2768 \\
-	      45 & 12.8445 & 3.47436 &       8.5539 &    10.8552 &    12.2773 & 1.42303 &                       1.4362 \\
-	      50 & 12.9245 & 3.58228 &       9.2702 &    11.2183 &    12.3990 & 1.40922 &                       1.3724 \\
-\bottomrule
-\end{tabular}
-\end{table}  
+
  
  
 
