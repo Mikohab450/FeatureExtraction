@@ -454,8 +454,8 @@ Aff-Wild2 \cite{kollias2019expression} & 2019 &$\sim$ 2,800,000 \\
 {Nazywana też czasem warstwą łączenia(ang. \ang {pooling layer}), najczęściej umieszczana jest pomiędzy dwoma warstwami konwolucyjnymi. Jej zadaniem jest redukcja rozmiaru otrzymanych map aktywacji, co zmiejsza ilosć parametrów, których sieć musi się nauczyć. Ta warstwa opiera się u filtry najczęściej o rozmiarach $2\times2$, które biorą maksymalną lub średnią wartość z każdego rejonu i zmniejszają w ten sposób wysokość oraz szerokość danych, nie zmieniając jednak głębokości.}
 
 
-\subsubsection{Warstwa aktywacyjne}
-{Ta warstwa to funkcja matematyczna, która decyduje o tym, czy neuron ma być aktywny, czy nie, na podstawie jego wartości. Powinna być to funkcja szybka do obliczenia, bo będzie wykonywana dla każdego nueronu w sieci. Początkowo często używaną funkcją był $\tanh(x)$ (rys. \ref {tanh}) , ale z czasem okazało się że funkcja rektyfikowanej jednostki liniowej (ReLU), definiowanej jako $\max(0,x)$(rys. \ref{ReLu}) pozwala osiagnąć lepsze wyniki \cite{nair2010rectified}\cite{glorot2011deep} i aktualnie jest najczęściej używaną funkcją aktywacji \cite{ramachandran2017searching}.}
+\subsubsection{Warstwa aktywacyjna}
+{Ta warstwa to funkcja matematyczna, która decyduje o tym, czy neuron ma być aktywny, czy nie, na podstawie jego wartości. Powinna być to funkcja szybka do obliczenia, bo będzie wykonywana dla każdego nueronu w sieci. Początkowo często używaną funkcją był $\tanh(x)$ (rys. \ref {tanh}) , ale z czasem okazało się że funkcja rektyfikowanej jednostki liniowej (ReLU), definiowanej jako $\max(0,x)$(rys. \ref{ReLu}) pozwala osiagnąć lepsze wyniki \cite{nair2010rectified,glorot2011deep} i aktualnie jest najczęściej używaną funkcją aktywacji \cite{ramachandran2017searching}.}
 
 
 
@@ -700,12 +700,12 @@ gdzie $a_{i} \in  \{0,1\}$ określa, czy miara podobieństwa jest użyta.
 {Następnie należy zainstalować wszystkie biblioteki potrzebne do działanie programu. Można to zrobić za pomocą wbudowanego w Pythona systemu zarządzania bibliotekami pip. W systemie Windows należy wpisać komendę:}
 
 
-{\lstinline|C:\ > py -m pip install -r .../FeatureExtraction/FeatureExtraction/requirements| }
+{\lstinline|C:\ > py -m pip install -r .../FeatureExtraction/requirements.txt| }
 
 {A w systemach Linux oraz Mac OS X:}
 
 
-{\lstinline|$ python -m pip install -r .../FeatureExtraction/FeatureExtraction/requirements| }
+{\lstinline|$ python -m pip install -r .../FeatureExtraction/requirements.txt| }
 
 {Gdzie w miejsce \emph{...} należy wpisać ścieżkę, do której narzędzie zostało pobrane. Następnie narzędzie można uruchomić wpisując w terminalu Windowsa}
 
@@ -1066,13 +1066,16 @@ def get_region_proposal(img_8bit,min_size = 500):
 \item[RoI] Region zainteresowań  (ang. \ang{Region of Interest})
 \item[IoU] Przecięcie nad połączeniem (ang. \ang{Intersection over Union})
 \item[CUDA] \ang{Compute Unified Device Architecture}
-\item[ILSVRC] TODO
+\item[ILSVRC] ImageNet Large Scale Visual Recognition Challenge
 \item[API] Interfejs Programowania Aplikacji(ang. \ang{Application Programming Interface})
 \item[GUI] Graficzny Interfejs Użytkownika (ang. \ang{Graphical User Interface})
+\item[PASCAL] Pattern Analysis, Statistical Modelling and Computational Learning
+\item[PASCAL VOC] PASCAL Visual Object Classes
+\item[YOLO] \ang{You Only Look Once}
 \end{description}
 
 
-\chapter*{Załącznik A: Wybrane fragmentu kodu źródłowego}
+\chapter*{Załącznik A: Wybrane fragmenty kodu źródłowego}
 
 \begin{lstlisting}
  def extract_features_from_image(self,img_dir,classes,IoU_cutoff_object = 0.5,IoU_cutoff_not_object = 0.5):        
